@@ -1,0 +1,33 @@
+name: datadog_flutter
+description: Log to Datadog from Flutter.
+version: 0.0.1
+homepage: https://github.com/greenbits/datadog_flutter
+
+environment:
+  sdk: ">=2.6.0 <3.0.0"
+
+dependencies:
+  meta: '>= 1.0.0 <2.0.0'
+  logging: ^0.11.0
+  http: '>= 0.12.0 <1.0.0'
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^4.0.0
+  test: ^1.9.4
+
+flutter:
+  # This section identifies this Flutter project as a plugin project.
+  # The androidPackage and pluginClass identifiers should not ordinarily
+  # be modified. They are used by the tooling to maintain consistency when
+  # adding or updating assets for this project.
+  plugin:
+    platforms:
+      android:
+        package: com.greenbits.datadog_flutter
+        pluginClass: DatadogFlutterPlugin
+      ios:
+        pluginClass: DatadogFlutterPlugin

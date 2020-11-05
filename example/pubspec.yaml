@@ -1,0 +1,12 @@
+name: datadog_flutter_example
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.6.0 <3.0.0'
+  flutter: '>=1.8.0 <2.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  datadog_flutter:
+    path: ../
