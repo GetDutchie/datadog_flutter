@@ -1,6 +1,6 @@
 name: datadog_flutter
-description: Log to Datadog from Flutter.
-version: 0.0.1
+description: Community implementation of native bindings for Datadog's SDK. Not an official package.
+version: 0.0.2
 homepage: https://github.com/greenbits/datadog_flutter
 
 environment:

@@ -19,5 +19,5 @@ Log to Datadog from Flutter.
   s.platform = :ios, '11.0'
 
   # https://github.com/flutter/flutter/issues/17978
-  s.dependency 'DatadogSDKObjc'
+  s.dependency 'DatadogSDK', '>= 1.3.0'
 end

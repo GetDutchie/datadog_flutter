@@ -1,4 +1,4 @@
 #import <Flutter/Flutter.h>
 
-@interface DatadogFlutterPlugin : NSObject<FlutterPlugin>
+@interface DatadogFlutterPlugin : NSObject <FlutterPlugin>
 @end
