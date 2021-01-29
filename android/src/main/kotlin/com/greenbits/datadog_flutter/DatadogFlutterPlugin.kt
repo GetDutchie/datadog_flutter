@@ -80,7 +80,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       call.method == "log" -> {
         val logLevel = call.argument<String>("level")!!
         val logMessage = call.argument<String>("message")!!
-        val attributes = call.argument<Map<String, Object>>("attributes")!!
+        val attributes = call.argument<Map<String, Object>>("attributes") ?: HashMap<String, Object>();
         
         when (logLevel) {
           "debug" -> {
