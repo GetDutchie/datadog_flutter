@@ -19,12 +19,14 @@ class DatadogFlutter {
     this.loggerName,
     bool bindOnRecord = true,
     String environment = 'development',
+    bool useEUEndpoints = false,
   }) {
     _channel.invokeMethod('initWithClientToken', {
       'clientToken': clientToken,
       'serviceName': serviceName,
       'loggerName': loggerName,
       'environment': environment,
+      'useEUEndpoints': useEUEndpoints,
     });
 
     if (bindOnRecord) Logger.root.onRecord.listen(onRecordCallback);
