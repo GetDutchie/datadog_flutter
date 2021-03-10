@@ -57,7 +57,7 @@ void main() {
 
     group('#time', () {
       final elapsedTime = 1000;
-      Stopwatch watch;
+      late Stopwatch watch;
 
       setUpAll(() {
         watch = MockStopwatch();

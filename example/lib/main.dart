@@ -29,7 +29,7 @@ class MyHomePage extends StatelessWidget {
   final DatadogFlutter datadogLogger;
   final Logger otherLogger;
 
-  MyHomePage({Key key, this.title})
+  MyHomePage({Key? key, required this.title})
       : otherLogger = Logger('other logger'),
         datadogLogger = DatadogFlutter(
           clientToken: DATADOG_CLIENT_TOKEN,
@@ -45,9 +45,9 @@ class MyHomePage extends StatelessWidget {
         title: Text(title),
       ),
       body: Center(
-        child: FlatButton(
-          child: Text('Log to Datadog'),
+        child: TextButton(
           onPressed: () => otherLogger.fine('hello datadog'),
+          child: Text('Log to Datadog'),
         ),
       ),
     );

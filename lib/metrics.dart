@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:meta/meta.dart' show visibleForTesting, required, protected;
+import 'package:meta/meta.dart' show visibleForTesting, protected;
 import 'package:http/http.dart' as http;
 
 /// Supported Datadog types
@@ -11,10 +11,10 @@ class Metric {
   final String name;
   final MetricType type;
   final List<List<int>> value;
-  final String host;
-  final int interval;
-  final String prefix;
-  final Set<String> tags;
+  final String? host;
+  final int? interval;
+  final String? prefix;
+  final Set<String>? tags;
 
   const Metric(
     String _name,
@@ -42,7 +42,7 @@ class Metric {
       map['interval'] = interval;
     }
 
-    if (tags != null && tags.isNotEmpty) {
+    if (tags != null && tags!.isNotEmpty) {
       map['tags'] = tags;
     }
 
@@ -84,16 +84,15 @@ class DatadogMetrics {
   final List<String> defaultTags;
 
   /// A prefix for every metric. Does **not** end in `.`
-  final String prefix;
+  final String? prefix;
 
   /// URL with API key
   final String _endpoint;
 
   /// Datadog expects the time to be in seconds.
-  int get currentTime =>
-      (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
+  int get currentTime => (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
 
-  Timer _timer;
+  Timer? _timer;
 
   bool get _queueIsRunning => _timer?.isActive == true;
   @visibleForTesting
@@ -101,14 +100,13 @@ class DatadogMetrics {
 
   DatadogMetrics(
     String apiKey, {
-    @required this.host,
+    required this.host,
     this.defaultTags = _emptyStringList,
     this.prefix,
   }) : _endpoint = '$_DATADOG_ENDPOINT?api_key=$apiKey';
 
   /// ????
-  Metric count(String name, int value,
-      {int interval = 1, List<String> tags = _emptyStringList}) {
+  Metric count(String name, int value, {int interval = 1, List<String> tags = _emptyStringList}) {
     final metric = Metric(
       name,
       MetricType.count,
@@ -126,8 +124,7 @@ class DatadogMetrics {
   }
 
   /// ????
-  Metric rate(String name, int value,
-      {int interval = 1, List<String> tags = _emptyStringList}) {
+  Metric rate(String name, int value, {int interval = 1, List<String> tags = _emptyStringList}) {
     final metric = Metric(
       name,
       MetricType.rate,
@@ -163,7 +160,7 @@ class DatadogMetrics {
 
   /// Log the time delta for a metric
   Metric time(String name, Stopwatch stopwatch,
-      {int interval, List<String> tags = _emptyStringList}) {
+      {int? interval, List<String> tags = _emptyStringList}) {
     // since currentTime is in seconds
     final elapsed = (stopwatch.elapsedMilliseconds / 1000).round();
     stopwatch.stop();
@@ -185,8 +182,7 @@ class DatadogMetrics {
   }
 
   /// Increase metric counter by one
-  Metric increment(String name,
-      {int interval, List<String> tags = _emptyStringList}) {
+  Metric increment(String name, {int? interval, List<String> tags = _emptyStringList}) {
     return rate(name, 1, tags: tags);
   }
 
@@ -201,7 +197,7 @@ class DatadogMetrics {
   /// By starting the queue, all metrics are batched and sent every x [interval].
   /// This would reduce the number of outbound requests.
   /// [interval] defaults to 10 seconds
-  void startQueue([Duration interval]) {
+  void startQueue([Duration? interval]) {
     interval ??= Duration(seconds: 10);
     stopQueue();
     _timer = Timer.periodic(interval, _sendQueuedMetrics);
@@ -222,20 +218,19 @@ class DatadogMetrics {
   }
 
   /// Batch report metrics to Datadog
-  void _sendQueuedMetrics(Timer timer) {
-    if (queue?.isEmpty != false) return;
+  void _sendQueuedMetrics(Timer? timer) {
+    if (queue.isEmpty) return;
 
     _httpSend(queue).then((_) => queue.clear());
   }
 
   Future<void> _httpSend(List<Metric> metrics) async {
     try {
-      return await http.post(
-        _endpoint,
+      await http.post(
+        Uri.parse(_endpoint),
         headers: {'Content-type': 'application/json'},
         body: jsonEncode({
-          'series':
-              metrics.map((m) => m.asMap).toList().cast<Map<String, dynamic>>(),
+          'series': metrics.map((m) => m.asMap).toList().cast<Map<String, dynamic>>(),
         }),
       );
     } catch (e) {
