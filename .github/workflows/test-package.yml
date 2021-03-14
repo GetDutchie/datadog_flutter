@@ -24,6 +24,8 @@ jobs:
       - uses: dart-lang/setup-dart@v0.3
         with:
           sdk: ${{ matrix.sdk }}
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1.4.0
       - id: install
         name: Install dependencies
         run: flutter pub get
