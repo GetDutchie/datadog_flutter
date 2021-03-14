@@ -42,7 +42,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: cirrusci/flutter:{{ matrix.flutter_version }}
+      image: cirrusci/flutter:latest
     strategy:
       fail-fast: false
       matrix:
