@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:flutter/services.dart';
 
 class DatadogFlutter {
@@ -9,13 +8,13 @@ class DatadogFlutter {
 
   final String clientToken;
 
-  final String loggerName;
+  final String? loggerName;
 
   final String serviceName;
 
   DatadogFlutter({
-    @required this.clientToken,
-    @required this.serviceName,
+    required this.clientToken,
+    required this.serviceName,
     this.loggerName,
     bool bindOnRecord = true,
     String environment = 'development',
@@ -57,7 +56,7 @@ class DatadogFlutter {
   }
 
   Future<void> log(String logMessage, Level logLevel,
-      {Map<String, dynamic> attributes}) async {
+      {Map<String, dynamic>? attributes}) async {
     return await _channel.invokeMethod('log', {
       'level': _levelAsStatus(logLevel),
       'message': logMessage,
