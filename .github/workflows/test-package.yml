@@ -27,6 +27,11 @@ jobs:
       - id: install
         name: Install dependencies
         run: flutter pub get
+      - uses: actions/upload-artifact@v2
+        with:
+          name: workspace_artifacts
+          path: ${{github.workspace}}
+          retention-days: 1
 
   # Check code formatting and static analysis on a single OS (linux)
   # against Dart dev.
@@ -36,6 +41,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
+      - uses: actions/checkout@v2
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed .
         if: always() && steps.install.outcome == 'success'
@@ -52,6 +58,10 @@ jobs:
     strategy:
       fail-fast: false
     steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: workspace_artifacts
+        path: ${{github.workspace}}
       - name: Run VM tests
         run: flutter test
         if: always() && steps.install.outcome == 'success'
