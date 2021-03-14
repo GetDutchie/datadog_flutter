@@ -71,7 +71,8 @@ void main() {
         expect(map['points'], hasLength(2));
         expect(map['points'][0][0], equals(map['points'][0][1]));
         expect(map['points'][1][0], equals(map['points'][1][1]));
-        expect(map['points'][0][1] + elapsedTime, greaterThanOrEqualTo(map['points'][1][1]));
+        expect(map['points'][0][1] + elapsedTime,
+            greaterThanOrEqualTo(map['points'][1][1]));
       });
 
       test('with default tags', () {

@@ -90,7 +90,8 @@ class DatadogMetrics {
   final String _endpoint;
 
   /// Datadog expects the time to be in seconds.
-  int get currentTime => (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
+  int get currentTime =>
+      (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
 
   Timer? _timer;
 
@@ -106,7 +107,8 @@ class DatadogMetrics {
   }) : _endpoint = '$_DATADOG_ENDPOINT?api_key=$apiKey';
 
   /// ????
-  Metric count(String name, int value, {int interval = 1, List<String> tags = _emptyStringList}) {
+  Metric count(String name, int value,
+      {int interval = 1, List<String> tags = _emptyStringList}) {
     final metric = Metric(
       name,
       MetricType.count,
@@ -124,7 +126,8 @@ class DatadogMetrics {
   }
 
   /// ????
-  Metric rate(String name, int value, {int interval = 1, List<String> tags = _emptyStringList}) {
+  Metric rate(String name, int value,
+      {int interval = 1, List<String> tags = _emptyStringList}) {
     final metric = Metric(
       name,
       MetricType.rate,
@@ -182,7 +185,8 @@ class DatadogMetrics {
   }
 
   /// Increase metric counter by one
-  Metric increment(String name, {int? interval, List<String> tags = _emptyStringList}) {
+  Metric increment(String name,
+      {int? interval, List<String> tags = _emptyStringList}) {
     return rate(name, 1, tags: tags);
   }
 
@@ -230,7 +234,8 @@ class DatadogMetrics {
         Uri.parse(_endpoint),
         headers: {'Content-type': 'application/json'},
         body: jsonEncode({
-          'series': metrics.map((m) => m.asMap).toList().cast<Map<String, dynamic>>(),
+          'series':
+              metrics.map((m) => m.asMap).toList().cast<Map<String, dynamic>>(),
         }),
       );
     } catch (e) {

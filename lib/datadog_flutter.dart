@@ -3,7 +3,8 @@ import 'package:logging/logging.dart';
 import 'package:flutter/services.dart';
 
 class DatadogFlutter {
-  static const MethodChannel _channel = MethodChannel('plugins.greenbits.com/datadog_flutter');
+  static const MethodChannel _channel =
+      MethodChannel('plugins.greenbits.com/datadog_flutter');
 
   final String clientToken;
 
@@ -54,7 +55,8 @@ class DatadogFlutter {
     });
   }
 
-  Future<void> log(String logMessage, Level logLevel, {Map<String, dynamic>? attributes}) async {
+  Future<void> log(String logMessage, Level logLevel,
+      {Map<String, dynamic>? attributes}) async {
     return await _channel.invokeMethod('log', {
       'level': _levelAsStatus(logLevel),
       'message': logMessage,
