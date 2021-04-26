@@ -24,6 +24,11 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
                 ).build())
         var builder = Logger.builder
             .set(serviceName: argsMap.value(forKey: "serviceName") as! String)
+        if let useEUEndpoints = argsMap.value(forKey: "useEUEndpoints") as? Number {
+          if useEUEndpoints == 1 {
+            builder = builder.set(endpoint: .eu)
+          }
+        }
         if let loggerName = argsMap.value(forKey: "loggerName") as? String {
             builder = builder.set(loggerName: loggerName)
         }
