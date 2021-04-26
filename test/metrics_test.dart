@@ -2,7 +2,15 @@ import 'package:test/test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:datadog_flutter/metrics.dart';
 
-class MockStopwatch extends Mock implements Stopwatch {}
+final elapsedTime = 1000;
+
+class MockStopwatch extends Mock implements Stopwatch {
+  // While `when(elapsedMilliseconds).then` is the proper way
+  // to do this, an error was thrown in mockito becuase the
+  // stubbed property started as null
+  @override
+  int elapsedMilliseconds = elapsedTime;
+}
 
 const apiKey = '1234nonexistent';
 const DATADOG_URL = 'https://api.datadoghq.com/api/v1/series?api_key=$apiKey';
@@ -56,12 +64,9 @@ void main() {
     });
 
     group('#time', () {
-      final elapsedTime = 1000;
-      Stopwatch watch;
-
+      late Stopwatch watch;
       setUpAll(() {
         watch = MockStopwatch();
-        when(watch.elapsedMilliseconds).thenReturn(elapsedTime);
       });
 
       test('with stopwatch', () {
@@ -71,7 +76,8 @@ void main() {
         expect(map['points'], hasLength(2));
         expect(map['points'][0][0], equals(map['points'][0][1]));
         expect(map['points'][1][0], equals(map['points'][1][1]));
-        expect(map['points'][0][1] + elapsedTime, greaterThanOrEqualTo(map['points'][1][1]));
+        expect(map['points'][0][1] + elapsedTime,
+            greaterThanOrEqualTo(map['points'][1][1]));
       });
 
       test('with default tags', () {
