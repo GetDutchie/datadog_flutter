@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.0.1
+
+* Support configuration for EU endpoints (#4)
+* Use MavenCentral instead of JCenter for dependency (#8)
+
 ## 1.0.0
 
 * Sound null safety
