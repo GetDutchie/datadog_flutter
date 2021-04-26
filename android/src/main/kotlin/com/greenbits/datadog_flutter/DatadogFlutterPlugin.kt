@@ -46,7 +46,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     when {
       call.method == "initWithClientToken" -> {
-        val config = DatadogConfig.Builder(call.argument<String>("clientToken")!!, call.argument<String>("environment"))
+        val config = DatadogConfig.Builder(call.argument<String>("clientToken")!!, call.argument<String>("environment")!!)
                 .setServiceName(call.argument<String>("serviceName")!!)
                 .build()
         Datadog.initialize(context, config = config)
