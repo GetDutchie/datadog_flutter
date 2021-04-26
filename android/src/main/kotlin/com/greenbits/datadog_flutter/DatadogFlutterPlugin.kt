@@ -46,9 +46,14 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     when {
       call.method == "initWithClientToken" -> {
-        val config = DatadogConfig.Builder(call.argument<String>("clientToken")!!, call.argument<String>("environment")!!)
+        val configBuilder = DatadogConfig.Builder(call.argument<String>("clientToken")!!, call.argument<String>("environment")!!)
                 .setServiceName(call.argument<String>("serviceName")!!)
-                .build()
+
+        if (call.argument<Boolean>("useEUEndpoints")!!) {
+          configBuilder.useEUEndpoints()
+        }
+
+        val config = configBuilder.build()
         Datadog.initialize(context, config = config)
         val builder = Logger.Builder()
           .setNetworkInfoEnabled(true)
