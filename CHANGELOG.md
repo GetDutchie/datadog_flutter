@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.0.1+1
+
+* Fix Swift error with EU endpoints
+
 ## 1.0.1
 
 * Support configuration for EU endpoints (#4)

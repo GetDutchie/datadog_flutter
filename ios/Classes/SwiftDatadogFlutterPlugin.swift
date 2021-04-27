@@ -15,20 +15,20 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
     let argsMap = call.arguments as! NSDictionary
     switch call.method {
       case "initWithClientToken":
+        var config = Datadog.Configuration.builderUsing(
+          clientToken: argsMap.value(forKey:"clientToken") as! String,
+          environment: argsMap.value(forKey: "environment") as! String
+        )
+        if argsMap.value(forKey: "useEUEndpoints") as? NSNumber == 1 {
+          config = config.set(logsEndpoint: .eu)
+        }
+
         Datadog.initialize(
             appContext: .init(),
-            configuration: Datadog.Configuration
-                .builderUsing(
-                    clientToken: argsMap.value(forKey:"clientToken") as! String,
-                    environment: argsMap.value(forKey: "environment") as! String
-                ).build())
+            configuration: config.build())
         var builder = Logger.builder
             .set(serviceName: argsMap.value(forKey: "serviceName") as! String)
-        if let useEUEndpoints = argsMap.value(forKey: "useEUEndpoints") as? Number {
-          if useEUEndpoints == 1 {
-            builder = builder.set(endpoint: .eu)
-          }
-        }
+
         if let loggerName = argsMap.value(forKey: "loggerName") as? String {
             builder = builder.set(loggerName: loggerName)
         }
