@@ -3,6 +3,8 @@ import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/services.dart';
 
+enum TrackingConsent { granted, notGranted, pending }
+
 class DatadogFlutter {
   static const MethodChannel _channel =
       MethodChannel('plugins.greenbits.com/datadog_flutter');
@@ -16,16 +18,33 @@ class DatadogFlutter {
   DatadogFlutter({
     @required this.clientToken,
     @required this.serviceName,
-    this.loggerName,
     bool bindOnRecord = true,
+    bool crashReportsEnabled = false,
     String environment = 'development',
+
+    /// Requested by Datadog's Android SDK, this is the "VARIANT NAME"
+    /// in their documentation. It can be retrieved dynamically from
+    /// packages like `flutter_config` or `build_config` but is largely,
+    /// and safely, ignorable.
+    String flavorName = '',
+    this.loggerName,
+    bool logsEnabled = true,
+    bool rumEnabled = false,
+    bool tracesEnabled = false,
+    TrackingConsent trackingConsent = TrackingConsent.granted,
     bool useEUEndpoints = false,
   }) {
     _channel.invokeMethod('initWithClientToken', {
       'clientToken': clientToken,
-      'serviceName': serviceName,
-      'loggerName': loggerName,
+      'crashReportsEnabled': crashReportsEnabled,
       'environment': environment,
+      'flavorName': flavorName,
+      'loggerName': loggerName,
+      'logsEnabled': logsEnabled,
+      'rumEnabled': rumEnabled,
+      'serviceName': serviceName,
+      'tracesEnabled': tracesEnabled,
+      'trackingConsent': trackingConsent.index,
       'useEUEndpoints': useEUEndpoints,
     });
 
@@ -64,6 +83,12 @@ class DatadogFlutter {
       'level': _levelAsStatus(logLevel),
       'message': logMessage,
       if (attributes != null) 'attributes': attributes,
+    });
+  }
+
+  Future<void> updateTrackingConsent(TrackingConsent trackingConsent) async {
+    return await _channel.invokeMethod('updateTrackingConsent', {
+      'trackingConsent': trackingConsent.index,
     });
   }
 
