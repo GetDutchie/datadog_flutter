@@ -5,6 +5,16 @@ import 'package:flutter/services.dart';
 
 enum TrackingConsent { granted, notGranted, pending }
 
+enum RUMAction {
+  tap,
+  scroll,
+  swipe,
+
+  /// Reported as `custom` on iOS
+  click,
+  custom,
+}
+
 class DatadogFlutter {
   static const MethodChannel _channel =
       MethodChannel('plugins.greenbits.com/datadog_flutter');
@@ -30,7 +40,6 @@ class DatadogFlutter {
     this.loggerName,
     bool logsEnabled = true,
     bool rumEnabled = false,
-    bool tracesEnabled = false,
     TrackingConsent trackingConsent = TrackingConsent.granted,
     bool useEUEndpoints = false,
   }) {
@@ -43,7 +52,6 @@ class DatadogFlutter {
       'logsEnabled': logsEnabled,
       'rumEnabled': rumEnabled,
       'serviceName': serviceName,
-      'tracesEnabled': tracesEnabled,
       'trackingConsent': trackingConsent.index,
       'useEUEndpoints': useEUEndpoints,
     });
@@ -75,6 +83,26 @@ class DatadogFlutter {
     return await _channel.invokeMethod('removeAttribute', {
       'key': attributeName,
     });
+  }
+
+  static Future<void> addUserAction(
+    String name, {
+    RUMAction action = RUMAction.tap,
+    Map<String, dynamic> attributes = const <String, dynamic>{},
+  }) async {
+    return await _channel.invokeMethod('addUserAction', {
+      'key': name,
+      'type': action.index,
+      'attributes': attributes,
+    });
+  }
+
+  static Future<void> startView(String screenName) async {
+    return await _channel.invokeMethod('startView', {'key': screenName});
+  }
+
+  static Future<void> stopView(String screenName) async {
+    return await _channel.invokeMethod('stopView', {'key': screenName});
   }
 
   Future<void> log(String logMessage, Level logLevel,

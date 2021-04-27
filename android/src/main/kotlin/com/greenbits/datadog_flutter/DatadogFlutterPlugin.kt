@@ -13,6 +13,9 @@ import com.datadog.android.Datadog
 import com.datadog.android.core.configuration.Configuration
 import com.datadog.android.core.configuration.Credentials
 import com.datadog.android.privacy.TrackingConsent
+import com.datadog.android.rum.RumMonitor
+import com.datadog.android.rum.GlobalRum
+import com.datadog.android.rum.RumActionType
 import com.datadog.android.Datadog.initialize
 import android.content.Context
 
@@ -51,7 +54,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       call.method == "initWithClientToken" -> {
         var configBuilder = Configuration.Builder(
           call.argument<Boolean>("logsEnabled")!!,
-          call.argument<Boolean>("tracesEnabled")!!,
+          false,
           call.argument<Boolean>("crashReportsEnabled")!!,
           call.argument<Boolean>("rumEnabled")!!
         )
@@ -77,6 +80,11 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         }
         logger = builder.build()
         Datadog.setVerbosity(Log.VERBOSE)
+
+        if (call.argument<Boolean>("rumEnabled")!!) {
+          val monitor = RumMonitor.Builder().build()
+          GlobalRum.registerIfAbsent(monitor)
+        }
       }
       call.method == "addTag" -> {
         logger.addTag(call.argument<String>("key")!!, call.argument<String>("value")!!)
@@ -97,6 +105,20 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       call.method == "updateTrackingConsent" -> {
         val consent = TrackingConsent.values()[call.argument<Int>("trackingConsent")!!]
         Datadog.setTrackingConsent(consent)
+        result.success(true)
+      }
+      call.method == "startView" -> {
+        GlobalRum.get().startView(call.argument<String>("key")!!)
+        result.success(true)
+      }
+      call.method == "stopView" -> {
+        GlobalRum.get().stopView(call.argument<String>("key")!!)
+        result.success(true)
+      }
+      call.method == "addUserAction" -> {
+        val type = RumActionType.values()[call.argument<Int>("type")!!]
+        GlobalRum.get().addUserAction(type, call.argument<String>("name")!!, call.argument<Map<String, Any?>>("attributes")!!)
+        result.success(true)
       }
       call.method == "log" -> {
         val logLevel = call.argument<String>("level")!!
