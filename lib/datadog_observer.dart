@@ -12,7 +12,7 @@ class DatadogObserver extends RouteObserver<PageRoute<dynamic>> {
 
   Future<void> _sendScreenView(String newRoute, String oldRoute) async {
     if (oldRoute != null) await DatadogRum.shared.stopView(oldRoute);
-    await DatadogRum.shared.startView(newRoute);
+    if (newRoute != null) await DatadogRum.shared.startView(newRoute);
   }
 
   @override
