@@ -55,25 +55,29 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         getLogger(args)?.addTag(withKey: args!["key"] as! String, value: args!["value"] as! String)
         result(true)
 
+      case "addTiming":
+        Global.rum.addTiming(name: args!["name"] as! String)
+        result(true)
+
       case "addUserAction" :
         let type = numberToRumActionType(args?["type"] as? NSNumber)
-        if let attributes = args?["attributes"] as? Dictionary<String, Encodable> {
+        let attributes = args?["attributes"] as? Dictionary<String, Encodable>
+        if attributes?.isEmpty ?? true {
           Global.rum.addUserAction(
             type: type,
-            name: args!["name"] as! String,
-            attributes: attributes
+            name: args!["name"] as! String
           )
         } else {
           Global.rum.addUserAction(
             type: type,
-            name: args!["name"] as! String
+            name: args!["name"] as! String,
+            attributes: attributes!
           )
         }
         result(true)
 
       case "createLogger":
         var builder = Logger.builder
-            .set(serviceName: args!["serviceName"] as! String)
 
         if let loggerName = args?["loggerName"] as? String {
           builder = builder.set(loggerName: loggerName)
@@ -89,8 +93,42 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         getLogger(args)?.removeAttribute(forKey: args!["key"] as! String)
         result(true)
 
+      case "startUserAction":
+        let type = numberToRumActionType(args?["type"] as? NSNumber)
+        let attributes = args?["attributes"] as? Dictionary<String, Encodable>
+        if attributes?.isEmpty ?? true {
+          Global.rum.startUserAction(
+            type: type,
+            name: args!["name"] as! String
+          )
+        } else {
+          Global.rum.startUserAction(
+            type: type,
+            name: args!["name"] as! String,
+            attributes: attributes!
+          )
+        }
+        result(true)
+
       case "startView":
         Global.rum.startView(key: args!["key"] as! String)
+        result(true)
+
+      case "stopUserAction":
+        let type = numberToRumActionType(args?["type"] as? NSNumber)
+        let attributes = args?["attributes"] as? Dictionary<String, Encodable>
+        if attributes?.isEmpty ?? true {
+          Global.rum.stopUserAction(
+            type: type,
+            name: args!["name"] as? String
+          )
+        } else {
+          Global.rum.stopUserAction(
+            type: type,
+            name: args!["name"] as? String,
+            attributes: attributes!
+          )
+        }
         result(true)
 
       case "stopView":

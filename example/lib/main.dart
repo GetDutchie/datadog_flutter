@@ -19,15 +19,15 @@ void main() async {
     serviceName: 'my-cool-app',
     trackingConsent: TrackingConsent.granted,
   );
-  final ddLogger = DatadogLogger(serviceName: 'my-cool-app');
+  final ddLogger = DatadogLogger();
   // Capture Flutter errors automatically:
-  FlutterError.onError = DatadogRum.shared.addFlutterError;
+  FlutterError.onError = DatadogRum.instance.addFlutterError;
 
   // Catch errors without crashing the app:
   runZonedGuarded(() {
     runApp(MyApp(ddLogger));
   }, (error, stackTrace) {
-    DatadogRum.shared.addError(error, stackTrace);
+    DatadogRum.instance.addError(error, stackTrace);
   });
   runApp(MyApp(ddLogger));
 }

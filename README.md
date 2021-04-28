@@ -24,7 +24,7 @@ Community implementation of native bindings for Datadog's SDK. **This is not an 
 In its default implementation, log data will only be transmitted to Datadog through [`Logger`](https://pub.dev/packages/logging) records. `print` statements are not guaranteed to be captured.
 
 ```dart
-ddLogger = DatadogLogger(serviceName: 'my-app-name');
+ddLogger = DatadogLogger(loggerName: 'orders');
 
 ddLogger.addTag('restaurant_type', 'pizza');
 ddLogger.removeTag('restaurant_type');
@@ -67,13 +67,13 @@ RUM adds support for error, event, and screen tracking. The integration is parti
     ```dart
       void main() async {
         // Capture Flutter errors automatically:
-        FlutterError.onError = DatadogRum.shared.addFlutterError;
+        FlutterError.onError = DatadogRum.instance.addFlutterError;
 
         // Catch errors without crashing the app:
         runZonedGuarded(() {
           runApp(MyApp());
         }, (error, stackTrace) {
-          DatadogRum.shared.addError(error, stackTrace);
+          DatadogRum.instance.addError(error, stackTrace);
         });
       }
     ```
@@ -81,7 +81,7 @@ RUM adds support for error, event, and screen tracking. The integration is parti
     ```dart
       GestureDetector(
         onTap: () {
-          DatadogRum.shared.addUserAction('EventTapped');
+          DatadogRum.instance.addUserAction('EventTapped');
         }
       )
     ```
@@ -90,7 +90,7 @@ RUM adds support for error, event, and screen tracking. The integration is parti
       try {
         throw StateError();
       } catch (e, st) {
-        DatadogRum.shared.addError(e, st);
+        DatadogRum.instance.addError(e, st);
       }
     ```
 

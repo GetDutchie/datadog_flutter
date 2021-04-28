@@ -8,21 +8,18 @@ class DatadogLogger {
   /// `loggerName` attribute.
   ///
   /// Flutter `Logger#name` adds the `loggerName` attribute to every record.
+  ///
+  /// This is different than `service` which is inherited from [DatadogFlutter]
+  /// or can be defined as the `service` attribute per log.
   final String? loggerName;
 
-  /// The value for the `service` standard attribute attached to all logs
-  /// sent to Datadog.
-  final String serviceName;
-
   DatadogLogger({
-    required this.serviceName,
     this.loggerName,
     bool bindOnRecord = true,
   }) {
     channel.invokeMethod('createLogger', {
       'identifier': hashCode.toString(),
       'loggerName': loggerName,
-      'serviceName': serviceName,
     });
     if (bindOnRecord) Logger.root.onRecord.listen(onRecordCallback);
   }
