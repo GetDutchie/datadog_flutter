@@ -1,5 +1,4 @@
 import 'package:datadog_flutter/src/tracking_consent.dart';
-import 'package:meta/meta.dart';
 import 'package:datadog_flutter/src/channel.dart';
 export 'package:datadog_flutter/src/tracking_consent.dart';
 
@@ -14,12 +13,12 @@ class DatadogFlutter {
   ///
   /// [rumApplicationId] must be provided to track RUM errors, actions, and views.
   static Future<void> initialize({
-    @required String clientToken,
-    @required String serviceName,
-    String androidRumApplicationId,
+    required String clientToken,
+    required String serviceName,
+    String? androidRumApplicationId,
     String environment = 'development',
     String flavorName = '',
-    String iosRumApplicationId,
+    String? iosRumApplicationId,
     TrackingConsent trackingConsent = TrackingConsent.pending,
     bool useEUEndpoints = false,
   }) async {

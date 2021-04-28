@@ -1,6 +1,5 @@
 import 'package:logging/logging.dart';
 import 'package:datadog_flutter/src/channel.dart';
-import 'package:meta/meta.dart';
 export 'package:datadog_flutter/src/tracking_consent.dart';
 
 class DatadogLogger {
@@ -9,14 +8,14 @@ class DatadogLogger {
   /// `loggerName` attribute.
   ///
   /// Flutter `Logger#name` adds the `loggerName` attribute to every record.
-  final String loggerName;
+  final String? loggerName;
 
   /// The value for the `service` standard attribute attached to all logs
   /// sent to Datadog.
   final String serviceName;
 
   DatadogLogger({
-    @required this.serviceName,
+    required this.serviceName,
     this.loggerName,
     bool bindOnRecord = true,
   }) {
@@ -69,7 +68,7 @@ class DatadogLogger {
   Future<void> log(
     String logMessage,
     Level logLevel, {
-    Map<String, dynamic> attributes,
+    Map<String, dynamic>? attributes,
   }) async {
     return await channel.invokeMethod('log', {
       'identifier': hashCode.toString(),
