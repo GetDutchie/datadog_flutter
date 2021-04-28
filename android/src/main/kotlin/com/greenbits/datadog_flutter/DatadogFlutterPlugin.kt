@@ -10,12 +10,19 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 import android.util.Log
 import com.datadog.android.log.Logger
 import com.datadog.android.Datadog
-import com.datadog.android.DatadogConfig
+import com.datadog.android.core.configuration.Configuration
+import com.datadog.android.core.configuration.Credentials
+import com.datadog.android.privacy.TrackingConsent
+import com.datadog.android.rum.RumMonitor
+import com.datadog.android.rum.GlobalRum
+import com.datadog.android.rum.RumActionType
+import com.datadog.android.rum.RumErrorSource
+import com.datadog.android.Datadog.initialize
 import android.content.Context
 
 /** DatadogFlutterPlugin */
 public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
-  private lateinit var logger: Logger
+  private var loggers = mutableMapOf<String, Logger>()
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     context = flutterPluginBinding.getApplicationContext()
@@ -46,98 +53,176 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     when {
       call.method == "initWithClientToken" -> {
-        val configBuilder = DatadogConfig.Builder(call.argument<String>("clientToken")!!, call.argument<String>("environment")!!)
+        val rumApplicationId = call.argument<String>("androidRumApplicationId")
+        var configBuilder = Configuration.Builder(
+          true,
+          false,
+          rumApplicationId != null,
+          rumApplicationId != null
+        )
+        if (call.argument<Boolean>("useEUEndpoints")!!) {
+          configBuilder = configBuilder.useEUEndpoints()
+        }
+        val config = configBuilder.build()
+
+        val credentials = Credentials(
+          call.argument<String>("clientToken")!!,
+          call.argument<String>("serviceName")!!,
+          call.argument<String>("flavor")!!,
+          rumApplicationId,
+          call.argument<String>("serviceName")!!
+        )
+        val consent = TrackingConsent.values()[call.argument<Int>("trackingConsent")!!]
+        initialize(context, credentials, config, consent)
+
+        Datadog.setVerbosity(Log.VERBOSE)
+
+        if (rumApplicationId != null) {
+          val monitor = RumMonitor.Builder().build()
+          GlobalRum.registerIfAbsent(monitor)
+        }
+      }
+      call.method == "addAttribute" -> {
+        getLogger(call)?.addAttribute(call.argument<String>("key")!!, call.argument<String>("value"))
+        result.success(true)
+      }
+      call.method == "addError" -> {
+        GlobalRum.get().addErrorWithStacktrace(
+          call.argument<String>("message")!!,
+          RumErrorSource.SOURCE,
+          call.argument<String>("stack")!!,
+          emptyMap()
+        )
+        result.success(true)
+      }
+      call.method == "addTag" -> {
+        getLogger(call)?.addTag(call.argument<String>("key")!!, call.argument<String>("value")!!)
+        result.success(true)
+      }
+      call.method == "addUserAction" -> {
+        val type = RumActionType.values()[call.argument<Int>("type")!!]
+        GlobalRum.get().addUserAction(
+                type,
+                call.argument<String>("name")!!,
+                call.argument<Map<String, Any?>>("attributes")!!
+        )
+        result.success(true)
+      }
+      call.method == "createLogger" -> {
+        val builder = Logger.Builder()
+                .setNetworkInfoEnabled(true)
                 .setServiceName(call.argument<String>("serviceName")!!)
 
-        if (call.argument<Boolean>("useEUEndpoints")!!) {
-          configBuilder.useEUEndpoints()
-        }
-
-        val config = configBuilder.build()
-        Datadog.initialize(context, config = config)
-        val builder = Logger.Builder()
-          .setNetworkInfoEnabled(true)
-          .setServiceName(call.argument<String>("serviceName")!!)
-          
         if (call.argument<String>("loggerName") != null) {
           builder.setLoggerName(call.argument<String>("loggerName")!!)
         }
-        logger = builder.build()
-        Datadog.setVerbosity(Log.VERBOSE)
-      }
-      call.method == "addTag" -> {
-        logger.addTag(call.argument<String>("key")!!, call.argument<String>("value")!!)
-        result.success(true)
-      }
-      call.method == "removeTag" -> {
-        logger.removeTagsWithKey(call.argument<String>("key")!!)
-        result.success(true)
-      }
-      call.method == "addAttribute" -> {
-        logger.addAttribute(call.argument<String>("key")!!, call.argument<String>("value"))
+        loggers[call.argument<String>("identifier")!!] = builder.build()
         result.success(true)
       }
       call.method == "removeAttribute" -> {
-        logger.removeAttribute(call.argument<String>("key")!!)
+        getLogger(call)?.removeAttribute(call.argument<String>("key")!!)
+        result.success(true)
+      }
+      call.method == "removeTag" -> {
+        getLogger(call)?.removeTagsWithKey(call.argument<String>("key")!!)
+        result.success(true)
+      }
+      call.method == "startUserAction" -> {
+        val type = RumActionType.values()[call.argument<Int>("type")!!]
+        GlobalRum.get().startUserAction(
+                type,
+                call.argument<String>("name")!!,
+                call.argument<Map<String, Any?>>("attributes")!!
+        )
+        result.success(true)
+      }
+      call.method == "startView" -> {
+        GlobalRum.get().startView(call.argument<String>("key")!!, call.argument<String>("key")!!)
+        result.success(true)
+      }
+      call.method == "stopUserAction" -> {
+        val type = RumActionType.values()[call.argument<Int>("type")!!]
+        GlobalRum.get().startUserAction(
+                type,
+                call.argument<String>("name")!!,
+                call.argument<Map<String, Any?>>("attributes")!!
+        )
+        result.success(true)
+      }
+      call.method == "stopView" -> {
+        GlobalRum.get().stopView(call.argument<String>("key")!!)
+        result.success(true)
+      }
+      call.method == "updateTrackingConsent" -> {
+        val consent = TrackingConsent.values()[call.argument<Int>("trackingConsent")!!]
+        Datadog.setTrackingConsent(consent)
         result.success(true)
       }
       call.method == "log" -> {
         val logLevel = call.argument<String>("level")!!
         val logMessage = call.argument<String>("message")!!
         val attributes = call.argument<Map<String, Object>>("attributes") ?: HashMap<String, Object>();
-        
+
         when (logLevel) {
           "debug" -> {
             if (attributes != null) {
-              logger.v(logMessage, attributes = attributes)
+              getLogger(call)?.v(logMessage, attributes = attributes)
             } else {
-              logger.v(logMessage)
-            }  
+              getLogger(call)?.v(logMessage)
+            }
           }
           "info" -> {
             if (attributes != null) {
-              logger.d(logMessage, attributes = attributes)
+              getLogger(call)?.d(logMessage, attributes = attributes)
             } else {
-              logger.d(logMessage)
-            }  
+              getLogger(call)?.d(logMessage)
+            }
           }
           "notice" -> {
             if (attributes != null) {
-              logger.i(logMessage, attributes = attributes)
+              getLogger(call)?.i(logMessage, attributes = attributes)
             } else {
-              logger.i(logMessage)
-            }  
+              getLogger(call)?.i(logMessage)
+            }
           }
           "warn" -> {
             if (attributes != null) {
-              logger.w(logMessage, attributes = attributes)
+              getLogger(call)?.w(logMessage, attributes = attributes)
             } else {
-              logger.w(logMessage)
-            }  
+              getLogger(call)?.w(logMessage)
+            }
           }
           "error" -> {
             if (attributes != null) {
-              logger.e(logMessage, attributes = attributes)
+              getLogger(call)?.e(logMessage, attributes = attributes)
             } else {
-              logger.e(logMessage)
-            }  
+              getLogger(call)?.e(logMessage)
+            }
           }
           "critical" -> {
             if (attributes != null) {
-              logger.wtf(logMessage, attributes = attributes)
+              getLogger(call)?.wtf(logMessage, attributes = attributes)
             } else {
-              logger.wtf(logMessage)
-            }  
+              getLogger(call)?.wtf(logMessage)
+            }
           }
           else -> {
             result.error("UNKNOWN", "unknown log level $logLevel specified", null)
           }
         }
-        
+
         result.success(null)
       }
       else -> result.notImplemented()
     }
+  }
+
+  private fun getLogger(@NonNull call: MethodCall): Logger? {
+    val identifier = call.argument<String>("identifier")
+
+    if (identifier == null) return null
+
+    return loggers[identifier!!]
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
