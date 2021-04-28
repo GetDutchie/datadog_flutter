@@ -17,25 +17,28 @@ class DatadogObserver extends RouteObserver<PageRoute<dynamic>> {
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic> previousRoute) {
-    super.didPush(route, previousRoute);
     if (route is PageRoute && previousRoute is PageRoute) {
       _sendScreenView(route.settings.name, previousRoute?.settings?.name);
     }
+    super.didPush(route, previousRoute);
+    DatadogRum.instance.addTiming('push');
   }
 
   @override
   void didReplace({Route<dynamic> newRoute, Route<dynamic> oldRoute}) {
-    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
     if (newRoute is PageRoute && oldRoute is PageRoute) {
       _sendScreenView(newRoute.settings.name, oldRoute?.settings?.name);
     }
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    DatadogRum.instance.addTiming('replace');
   }
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic> previousRoute) {
-    super.didPop(route, previousRoute);
     if (previousRoute is PageRoute && route is PageRoute) {
       _sendScreenView(route.settings.name, previousRoute?.settings?.name);
     }
+    super.didPop(route, previousRoute);
+    DatadogRum.instance.addTiming('pop');
   }
 }

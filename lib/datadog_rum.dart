@@ -55,8 +55,42 @@ class DatadogRum {
     return await channel.invokeMethod('startView', {'key': screenName});
   }
 
+  /// Manually track a user event.
+  ///
+  /// This is used to track long running user actions (e.g. "scroll").
+  /// Such an User Action must be stopped with [stopUserAction], and
+  /// will be stopped automatically if it lasts for more than 10 seconds.
+  Future<void> startUserAction(
+    String name, {
+    RUMAction action = RUMAction.tap,
+  }) async {
+    return await channel.invokeMethod('startUserAction', {
+      'name': name,
+      'type': action.index,
+    });
+  }
+
   /// Manually track exit from a screen. See [DatadogObserver].
   Future<void> stopView(String screenName) async {
     return await channel.invokeMethod('stopView', {'key': screenName});
+  }
+
+  /// Manually track a user event.
+  ///
+  /// This is used to stop tracking long running user actions (e.g. "scroll"),
+  /// started with [startUserAction].
+  Future<void> stopUserAction(
+    String name, {
+    RUMAction action = RUMAction.tap,
+  }) async {
+    return await channel.invokeMethod('stopUserAction', {
+      'name': name,
+      'type': action.index,
+    });
+  }
+
+  /// Manually track screen load time. See [DatadogObserver].
+  Future<void> addTiming(String event) async {
+    return await channel.invokeMethod('addTiming', {'name': event});
   }
 }

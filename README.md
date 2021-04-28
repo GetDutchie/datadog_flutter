@@ -24,7 +24,7 @@ Community implementation of native bindings for Datadog's SDK. **This is not an 
 In its default implementation, log data will only be transmitted to Datadog through [`Logger`](https://pub.dev/packages/logging) records. `print` statements are not guaranteed to be captured.
 
 ```dart
-ddLogger = DatadogLogger(serviceName: 'my-app-name');
+ddLogger = DatadogLogger(loggerName: 'orders');
 
 ddLogger.addTag('restaurant_type', 'pizza');
 ddLogger.removeTag('restaurant_type');

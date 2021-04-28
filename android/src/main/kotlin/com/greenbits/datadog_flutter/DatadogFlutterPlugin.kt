@@ -101,7 +101,11 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       }
       call.method == "addUserAction" -> {
         val type = RumActionType.values()[call.argument<Int>("type")!!]
-        GlobalRum.get().addUserAction(type, call.argument<String>("name")!!, call.argument<Map<String, Any?>>("attributes")!!)
+        GlobalRum.get().addUserAction(
+                type,
+                call.argument<String>("name")!!,
+                call.argument<Map<String, Any?>>("attributes")!!
+        )
         result.success(true)
       }
       call.method == "createLogger" -> {
@@ -123,8 +127,26 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         getLogger(call)?.removeTagsWithKey(call.argument<String>("key")!!)
         result.success(true)
       }
+      call.method == "startUserAction" -> {
+        val type = RumActionType.values()[call.argument<Int>("type")!!]
+        GlobalRum.get().startUserAction(
+                type,
+                call.argument<String>("name")!!,
+                call.argument<Map<String, Any?>>("attributes")!!
+        )
+        result.success(true)
+      }
       call.method == "startView" -> {
         GlobalRum.get().startView(call.argument<String>("key")!!, call.argument<String>("key")!!)
+        result.success(true)
+      }
+      call.method == "stopUserAction" -> {
+        val type = RumActionType.values()[call.argument<Int>("type")!!]
+        GlobalRum.get().startUserAction(
+                type,
+                call.argument<String>("name")!!,
+                call.argument<Map<String, Any?>>("attributes")!!
+        )
         result.success(true)
       }
       call.method == "stopView" -> {
