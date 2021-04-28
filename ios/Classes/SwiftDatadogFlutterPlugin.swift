@@ -65,12 +65,12 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         if attributes?.isEmpty ?? true {
           Global.rum.addUserAction(
             type: type,
-            name: args!["name"] as? String
+            name: args!["name"] as! String
           )
         } else {
           Global.rum.addUserAction(
             type: type,
-            name: args!["name"] as? String,
+            name: args!["name"] as! String,
             attributes: attributes!
           )
         }
