@@ -1,144 +1,50 @@
-import 'dart:async';
-import 'package:logging/logging.dart';
+import 'package:datadog_flutter/src/tracking_consent.dart';
 import 'package:meta/meta.dart';
-import 'package:flutter/services.dart';
-
-enum TrackingConsent { granted, notGranted, pending }
-
-enum RUMAction {
-  tap,
-  scroll,
-  swipe,
-
-  /// Reported as `custom` on iOS
-  click,
-  custom,
-}
+import 'package:datadog_flutter/src/channel.dart';
+export 'package:datadog_flutter/src/tracking_consent.dart';
 
 class DatadogFlutter {
-  static const MethodChannel _channel =
-      MethodChannel('plugins.greenbits.com/datadog_flutter');
-
-  final String clientToken;
-
-  final String loggerName;
-
-  final String serviceName;
-
-  DatadogFlutter({
-    @required this.clientToken,
-    @required this.serviceName,
-    bool bindOnRecord = true,
-    bool crashReportsEnabled = false,
+  /// By default, **events will not be sent to Datadog**. This is a requirement of
+  /// the SDK to maintain GDPR compliance. To maintain backwards functionality,
+  /// use `trackingConsent: TrackingConsent.granted`.
+  ///
+  /// [flavorName] is requested by Datadog's Android SDK, this is the "VARIANT NAME"
+  /// in their documentation. It can be retrieved dynamically from packages like
+  /// `flutter_config` or `build_config` but is largely, and safely, ignorable.
+  ///
+  /// [rumApplicationId] must be provided to track RUM errors, actions, and views.
+  static Future<void> initialize({
+    @required String clientToken,
+    @required String serviceName,
+    String androidRumApplicationId,
     String environment = 'development',
-
-    /// Requested by Datadog's Android SDK, this is the "VARIANT NAME"
-    /// in their documentation. It can be retrieved dynamically from
-    /// packages like `flutter_config` or `build_config` but is largely,
-    /// and safely, ignorable.
     String flavorName = '',
-    this.loggerName,
-    bool logsEnabled = true,
-    bool rumEnabled = false,
-    TrackingConsent trackingConsent = TrackingConsent.granted,
+    String iosRumApplicationId,
+    TrackingConsent trackingConsent = TrackingConsent.pending,
     bool useEUEndpoints = false,
-  }) {
-    _channel.invokeMethod('initWithClientToken', {
+  }) async {
+    await channel.invokeMethod('initWithClientToken', {
+      'androidRumApplicationId': androidRumApplicationId,
       'clientToken': clientToken,
-      'crashReportsEnabled': crashReportsEnabled,
       'environment': environment,
       'flavorName': flavorName,
-      'loggerName': loggerName,
-      'logsEnabled': logsEnabled,
-      'rumEnabled': rumEnabled,
+      'iosRumApplicationId': iosRumApplicationId,
       'serviceName': serviceName,
       'trackingConsent': trackingConsent.index,
       'useEUEndpoints': useEUEndpoints,
     });
-
-    if (bindOnRecord) Logger.root.onRecord.listen(onRecordCallback);
   }
 
-  Future<void> addTag(String tagName, String value) async {
-    return await _channel.invokeMethod('addTag', {
-      'key': tagName,
-      'value': value,
-    });
-  }
-
-  Future<void> removeTag(String tagName) async {
-    return await _channel.invokeMethod('removeTag', {
-      'key': tagName,
-    });
-  }
-
-  Future<void> addAttribute(String attributeName, String value) async {
-    return await _channel.invokeMethod('addAttribute', {
-      'key': attributeName,
-      'value': value,
-    });
-  }
-
-  Future<void> removeAttribute(String attributeName) async {
-    return await _channel.invokeMethod('removeAttribute', {
-      'key': attributeName,
-    });
-  }
-
-  static Future<void> addUserAction(
-    String name, {
-    RUMAction action = RUMAction.tap,
-    Map<String, dynamic> attributes = const <String, dynamic>{},
-  }) async {
-    return await _channel.invokeMethod('addUserAction', {
-      'key': name,
-      'type': action.index,
-      'attributes': attributes,
-    });
-  }
-
-  static Future<void> startView(String screenName) async {
-    return await _channel.invokeMethod('startView', {'key': screenName});
-  }
-
-  static Future<void> stopView(String screenName) async {
-    return await _channel.invokeMethod('stopView', {'key': screenName});
-  }
-
-  Future<void> log(String logMessage, Level logLevel,
-      {Map<String, dynamic> attributes}) async {
-    return await _channel.invokeMethod('log', {
-      'level': _levelAsStatus(logLevel),
-      'message': logMessage,
-      if (attributes != null) 'attributes': attributes,
-    });
-  }
-
-  Future<void> updateTrackingConsent(TrackingConsent trackingConsent) async {
-    return await _channel.invokeMethod('updateTrackingConsent', {
+  /// The SDK changes its behavior according to the new `trackingConsent`
+  /// value. For example, if the current tracking consent is `.pending`:
+  /// and it is changed to `.granted`, the SDK will send all current and
+  /// future data to Datadog; if changed to `.notGranted`, the SDK will
+  /// wipe all current data and will not collect any future data.
+  static Future<void> updateTrackingConsent(
+    TrackingConsent trackingConsent,
+  ) async {
+    return await channel.invokeMethod('updateTrackingConsent', {
       'trackingConsent': trackingConsent.index,
     });
-  }
-
-  /// Useful shorthand to attch to the logger stream:
-  /// `Logger.root.onRecord.listen(myDatadogLogger.onRecordCallback);`
-  Future<void> onRecordCallback(LogRecord record) => log(
-        record.message,
-        record.level,
-        attributes: {'loggerName': record.loggerName},
-      );
-
-  String _levelAsStatus(Level level) {
-    if (level.value <= 500) return 'debug';
-
-    if (level.value <= 700) return 'info';
-
-    if (level.value <= 800) return 'notice';
-
-    if (level == Level.WARNING) return 'warn';
-
-    if (level == Level.SEVERE) return 'error';
-
-    return 'critical';
   }
 }
