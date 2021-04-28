@@ -44,7 +44,7 @@ class DatadogRum {
     Map<String, dynamic> attributes = const <String, dynamic>{},
   }) async {
     return await channel.invokeMethod('addUserAction', {
-      'key': name,
+      'name': name,
       'type': action.index,
       'attributes': attributes,
     });
