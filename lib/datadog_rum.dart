@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:datadog_flutter/src/channel.dart';
-export 'package:datadog_flutter/src/tracking_consent.dart';
 
 enum RUMAction {
   tap,
