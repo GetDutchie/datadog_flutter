@@ -14,7 +14,7 @@ enum RUMAction {
 class DatadogRum {
   /// Before invoking any methods, `DatadogFlutter.initialize` must be invoked
   /// with a non-empty `rumApplicationId`.
-  static const DatadogRum shared = DatadogRum._();
+  static const DatadogRum instance = DatadogRum._();
 
   const DatadogRum._();
 

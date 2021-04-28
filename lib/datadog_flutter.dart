@@ -4,23 +4,25 @@ import 'package:datadog_flutter/src/channel.dart';
 export 'package:datadog_flutter/src/tracking_consent.dart';
 
 class DatadogFlutter {
-  /// By default, **events will not be sent to Datadog**. This is a requirement of
-  /// the SDK to maintain GDPR compliance. To maintain backwards functionality,
-  /// use `trackingConsent: TrackingConsent.granted`.
+  /// By default, **events will not be sent to Datadog**. This is a requirement
+  /// of the SDK to maintain GDPR compliance. To maintain backwards
+  /// functionality, use `trackingConsent: TrackingConsent.granted`. For more,
+  /// see [TrackingConsent].
   ///
-  /// [flavorName] is requested by Datadog's Android SDK, this is the "VARIANT NAME"
-  /// in their documentation. It can be retrieved dynamically from packages like
-  /// `flutter_config` or `build_config` but is largely, and safely, ignorable.
+  /// [flavorName] is requested by Datadog's Android SDK, this is the
+  /// "VARIANT NAME" in their documentation. It can be retrieved dynamically
+  /// from packages like `flutter_config` or `build_config` but is largely, and
+  /// safely, ignorable.
   ///
   /// [rumApplicationId] must be provided to track RUM errors, actions, and views.
   static Future<void> initialize({
     @required String clientToken,
     @required String serviceName,
+    @required TrackingConsent trackingConsent,
     String androidRumApplicationId,
     String environment = 'development',
     String flavorName = '',
     String iosRumApplicationId,
-    TrackingConsent trackingConsent = TrackingConsent.pending,
     bool useEUEndpoints = false,
   }) async {
     await channel.invokeMethod('initWithClientToken', {
