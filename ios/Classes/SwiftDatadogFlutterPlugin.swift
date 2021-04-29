@@ -39,43 +39,6 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
 
         result(true)
 
-      case "addAttribute":
-        getLogger(args)?.addAttribute(forKey: args!["key"] as! String, value: args!["value"] as! String)
-        result(true)
-
-      case "addError":
-        Global.rum.addError(
-          message: args!["message"] as! String,
-          source: .source,
-          stack: args?["stack"] as? String
-        )
-        result(true)
-
-      case "addTag":
-        getLogger(args)?.addTag(withKey: args!["key"] as! String, value: args!["value"] as! String)
-        result(true)
-
-      case "addTiming":
-        Global.rum.addTiming(name: args!["name"] as! String)
-        result(true)
-
-      case "addUserAction" :
-        let type = numberToRumActionType(args?["type"] as? NSNumber)
-        let attributes = args?["attributes"] as? Dictionary<String, Encodable>
-        if attributes?.isEmpty ?? true {
-          Global.rum.addUserAction(
-            type: type,
-            name: args!["name"] as! String
-          )
-        } else {
-          Global.rum.addUserAction(
-            type: type,
-            name: args!["name"] as! String,
-            attributes: attributes!
-          )
-        }
-        result(true)
-
       case "createLogger":
         var builder = Logger.builder
 
@@ -85,15 +48,69 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         loggers[args!["identifier"] as! String] = builder.build()
         result(true)
 
-      case "removeTag":
-        getLogger(args)?.removeTag(withKey: args!["key"] as! String)
+      case "loggerAddAttribute":
+        getLogger(args)?.addAttribute(
+          forKey: args!["key"] as! String,
+          value: args!["value"] as! String
+        )
         result(true)
 
-      case "removeAttribute":
+      case "loggerAddTag":
+        getLogger(args)?.addTag(
+          withKey: args!["key"] as! String,
+          value: args!["value"] as! String
+        )
+        result(true)
+
+      case "loggerRemoveAttribute":
         getLogger(args)?.removeAttribute(forKey: args!["key"] as! String)
         result(true)
 
-      case "startUserAction":
+      case "loggerRemoveTag":
+        getLogger(args)?.removeTag(withKey: args!["key"] as! String)
+        result(true)
+
+      case "rumAddAttribute":
+        Global.rum.addAttribute(
+          forKey: args!["key"] as! String,
+          value: args!["value"] as! String
+        )
+        result(true)
+
+      case "rumAddError":
+        Global.rum.addError(
+          message: args!["message"] as! String,
+          source: .source,
+          stack: args?["stack"] as? String
+        )
+        result(true)
+
+      case "rumAddTiming":
+        Global.rum.addTiming(name: args!["name"] as! String)
+        result(true)
+
+      case "rumAddUserAction" :
+        let type = numberToRumActionType(args?["type"] as? NSNumber)
+        let attributes = args?["attributes"] as? Dictionary<String, Encodable>
+        if attributes?.isEmpty ?? true {
+          Global.rum.addUserAction(
+            type: type,
+            name: args!["name"] as! String
+          )
+        } else {
+          Global.rum.addUserAction(
+            type: type,
+            name: args!["name"] as! String,
+            attributes: attributes!
+          )
+        }
+        result(true)
+
+      case "rumRemoveAttribute":
+        Global.rum.removeAttribute(forKey: args!["key"] as! String)
+        result(true)
+
+      case "rumStartUserAction":
         let type = numberToRumActionType(args?["type"] as? NSNumber)
         let attributes = args?["attributes"] as? Dictionary<String, Encodable>
         if attributes?.isEmpty ?? true {
@@ -110,11 +127,11 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         }
         result(true)
 
-      case "startView":
+      case "rumStartView":
         Global.rum.startView(key: args!["key"] as! String)
         result(true)
 
-      case "stopUserAction":
+      case "rumStopUserAction":
         let type = numberToRumActionType(args?["type"] as? NSNumber)
         let attributes = args?["attributes"] as? Dictionary<String, Encodable>
         if attributes?.isEmpty ?? true {
@@ -131,8 +148,17 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         }
         result(true)
 
-      case "stopView":
+      case "rumStopView":
         Global.rum.stopView(key: args!["key"] as! String)
+        result(true)
+
+      case "setUserInfo":
+        Datadog.setUserInfo(
+          id: args?["id"] as? String,
+          name: args?["name"] as? String,
+          email: args?["email"] as? String,
+          extraInfo: args?["attributes"] as? Dictionary<String, Encodable>
+        )
         result(true)
 
       case "updateTrackingConsent":

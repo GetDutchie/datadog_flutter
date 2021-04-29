@@ -37,6 +37,22 @@ class DatadogFlutter {
     });
   }
 
+  /// Sets current user information.
+  /// Those will be added to logs, traces and RUM events automatically.
+  static Future<void> setUserInfo({
+    String id,
+    String name,
+    String email,
+    Map<String, dynamic> extraInfo,
+  }) async {
+    return await channel.invokeMethod('setUserInfo', {
+      'id': id,
+      'name': name,
+      'email': email,
+      'extraInfo': extraInfo,
+    });
+  }
+
   /// The SDK changes its behavior according to the new `trackingConsent`
   /// value. For example, if the current tracking consent is `.pending`:
   /// and it is changed to `.granted`, the SDK will send all current and

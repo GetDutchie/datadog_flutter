@@ -82,32 +82,6 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
           GlobalRum.registerIfAbsent(monitor)
         }
       }
-      call.method == "addAttribute" -> {
-        getLogger(call)?.addAttribute(call.argument<String>("key")!!, call.argument<String>("value"))
-        result.success(true)
-      }
-      call.method == "addError" -> {
-        GlobalRum.get().addErrorWithStacktrace(
-          call.argument<String>("message")!!,
-          RumErrorSource.SOURCE,
-          call.argument<String>("stack")!!,
-          emptyMap()
-        )
-        result.success(true)
-      }
-      call.method == "addTag" -> {
-        getLogger(call)?.addTag(call.argument<String>("key")!!, call.argument<String>("value")!!)
-        result.success(true)
-      }
-      call.method == "addUserAction" -> {
-        val type = RumActionType.values()[call.argument<Int>("type")!!]
-        GlobalRum.get().addUserAction(
-                type,
-                call.argument<String>("name")!!,
-                call.argument<Map<String, Any?>>("attributes")!!
-        )
-        result.success(true)
-      }
       call.method == "createLogger" -> {
         val builder = Logger.Builder()
                 .setNetworkInfoEnabled(true)
@@ -119,38 +93,84 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         loggers[call.argument<String>("identifier")!!] = builder.build()
         result.success(true)
       }
-      call.method == "removeAttribute" -> {
+      call.method == "loggerAddAttribute" -> {
+        getLogger(call)?.addAttribute(call.argument<String>("key")!!, call.argument<String>("value"))
+        result.success(true)
+      }
+      call.method == "loggerAddTag" -> {
+        getLogger(call)?.addTag(call.argument<String>("key")!!, call.argument<String>("value")!!)
+        result.success(true)
+      }
+      call.method == "loggerRemoveAttribute" -> {
         getLogger(call)?.removeAttribute(call.argument<String>("key")!!)
         result.success(true)
       }
-      call.method == "removeTag" -> {
+      call.method == "loggerRemoveTag" -> {
         getLogger(call)?.removeTagsWithKey(call.argument<String>("key")!!)
         result.success(true)
       }
-      call.method == "startUserAction" -> {
-        val type = RumActionType.values()[call.argument<Int>("type")!!]
-        GlobalRum.get().startUserAction(
-                type,
-                call.argument<String>("name")!!,
-                call.argument<Map<String, Any?>>("attributes")!!
+      call.method == "rumAddAttribute" -> {
+        GlobalRum.addAttribute(call.argument<String>("key")!!, call.argument<String>("value"))
+        result.success(true)
+      }
+      call.method == "rumAddError" -> {
+        GlobalRum.get().addErrorWithStacktrace(
+          call.argument<String>("message")!!,
+          RumErrorSource.SOURCE,
+          call.argument<String>("stack")!!,
+          emptyMap()
         )
         result.success(true)
       }
-      call.method == "startView" -> {
-        GlobalRum.get().startView(call.argument<String>("key")!!, call.argument<String>("key")!!)
-        result.success(true)
-      }
-      call.method == "stopUserAction" -> {
+      call.method == "rumAddUserAction" -> {
         val type = RumActionType.values()[call.argument<Int>("type")!!]
-        GlobalRum.get().startUserAction(
-                type,
-                call.argument<String>("name")!!,
-                call.argument<Map<String, Any?>>("attributes")!!
+        GlobalRum.get().addUserAction(
+          type,
+          call.argument<String>("name")!!,
+          call.argument<Map<String, Any?>>("attributes")!!
         )
         result.success(true)
       }
-      call.method == "stopView" -> {
+      call.method == "rumRemoveAttribute" -> {
+        GlobalRum.removeAttribute(call.argument<String>("key")!!)
+        result.success(true)
+      }
+      call.method == "rumStartUserAction" -> {
+        val type = RumActionType.values()[call.argument<Int>("type")!!]
+        GlobalRum.get().startUserAction(
+          type,
+          call.argument<String>("name")!!,
+          call.argument<Map<String, Any?>>("attributes")!!
+        )
+        result.success(true)
+      }
+      call.method == "rumStartView" -> {
+        GlobalRum.get().startView(
+          call.argument<String>("key")!!,
+          call.argument<String>("key")!!
+        )
+        result.success(true)
+      }
+      call.method == "rumStopUserAction" -> {
+        val type = RumActionType.values()[call.argument<Int>("type")!!]
+        GlobalRum.get().startUserAction(
+          type,
+          call.argument<String>("name")!!,
+          call.argument<Map<String, Any?>>("attributes")!!
+        )
+        result.success(true)
+      }
+      call.method == "rumStopView" -> {
         GlobalRum.get().stopView(call.argument<String>("key")!!)
+        result.success(true)
+      }
+      call.method == "setUserInfo" -> {
+        Datadog.setUserInfo(
+          call.argument<String>("id"),
+          call.argument<String>("name"),
+          call.argument<String>("email"),
+          call.argument<Map<String, Any?>>("extraInfo")
+        )
         result.success(true)
       }
       call.method == "updateTrackingConsent" -> {
