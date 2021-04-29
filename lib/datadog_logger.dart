@@ -25,7 +25,7 @@ class DatadogLogger {
   }
 
   Future<void> addAttribute(String attributeName, String value) async {
-    return await channel.invokeMethod('addAttribute', {
+    return await channel.invokeMethod('loggerAddAttribute', {
       'identifier': hashCode.toString(),
       'key': attributeName,
       'value': value,
@@ -33,7 +33,7 @@ class DatadogLogger {
   }
 
   Future<void> addTag(String tagName, String value) async {
-    return await channel.invokeMethod('addTag', {
+    return await channel.invokeMethod('loggerAddTag', {
       'identifier': hashCode.toString(),
       'key': tagName,
       'value': value,
@@ -49,14 +49,14 @@ class DatadogLogger {
       );
 
   Future<void> removeAttribute(String attributeName) async {
-    return await channel.invokeMethod('removeAttribute', {
+    return await channel.invokeMethod('loggerRemoveAttribute', {
       'identifier': hashCode.toString(),
       'key': attributeName,
     });
   }
 
   Future<void> removeTag(String tagName) async {
-    return await channel.invokeMethod('removeTag', {
+    return await channel.invokeMethod('loggerRemoveTag', {
       'identifier': hashCode.toString(),
       'key': tagName,
     });

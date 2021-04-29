@@ -17,7 +17,6 @@ class DatadogObserver extends RouteObserver<PageRoute<dynamic>> {
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    super.didPush(route, previousRoute);
     if (route is PageRoute && previousRoute is PageRoute) {
       _sendScreenView(route.settings.name, previousRoute.settings.name);
     }
