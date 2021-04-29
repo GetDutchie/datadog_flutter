@@ -9,13 +9,16 @@ Community implementation of native bindings for Datadog's SDK. **This is not an 
 1. Generate a client token from Datadog through [the Settings > API  panel](https://app.datadoghq.com/account/settings#api) (under Client Tokens).
 1. Initialize:
     ```dart
-      await DatadogFlutter.initialize(
-        clientToken: myDatadogClientToken,
-        serviceName: 'my-app-name',
-        environment: 'production',
-      )
+    await DatadogFlutter.initialize(
+      clientToken: myDatadogClientToken,
+      serviceName: 'my-app-name',
+      environment: 'production',
+    )
     ```
-
+2. Associate RUM and log events (optional):
+    ```dart
+    await DatadogFlutter.setUserInfo(id: <YOUR_USER_ID>);
+    ```
 
 :warning: Your Podfile must have `use_frameworks!` (Flutter includes this by default) and your minimum iOS target must be >= 11. This is a requirement [from the Datadog SDK](https://github.com/DataDog/dd-sdk-ios/blob/master/DatadogSDKObjc.podspec#L17).
 
@@ -25,6 +28,8 @@ In its default implementation, log data will only be transmitted to Datadog thro
 
 ```dart
 ddLogger = DatadogLogger(loggerName: 'orders');
+// optionally set a value for HOST
+// ddLogger.addAttribute('hostname', <DEVICE IDENTIFIER>);
 
 ddLogger.addTag('restaurant_type', 'pizza');
 ddLogger.removeTag('restaurant_type');
@@ -44,54 +49,52 @@ RUM adds support for error, event, and screen tracking. The integration is parti
 
 1. [Supply an application ID](https://docs.datadoghq.com/real_user_monitoring/#getting-started) to `initialize`:
     ```dart
-      await DatadogFlutter.initialize(
-        clientToken: myDatadogClientToken,
-        serviceName: 'my-app-name',
-        environment: 'production',
-        iosRumApplicationId: myiOSRumApplicationId,
-        androidRumApplicationId: myAndroidRumApplicationId,
-      )
+    await DatadogFlutter.initialize(
+      clientToken: myDatadogClientToken,
+      serviceName: 'my-app-name',
+      environment: 'production',
+      iosRumApplicationId: myiOSRumApplicationId,
+      androidRumApplicationId: myAndroidRumApplicationId,
+    )
     ```
 1. Acknowledge `TrackingConsent` at initialization or later within your application. **Events will not be logged until `trackingConsent` is `.granted`**. This value can be updated via `DatadogFlutter.updateTrackingConsent`.
 1. Automatically track screens:
     ```dart
-      MaterialApp(
-        // ...your material config...
-        home: HomeScreen(),
-        navigatorObservers: [
-          DatadogObserver(),
-        ],
-      );
+    MaterialApp(
+      // ...your material config...
+      home: HomeScreen(),
+      navigatorObservers: [
+        DatadogObserver(),
+      ],
+    );
     ```
 1. Automatically report errors:
     ```dart
-      void main() async {
-        // Capture Flutter errors automatically:
-        FlutterError.onError = DatadogRum.instance.addFlutterError;
+    void main() async {
+      // Capture Flutter errors automatically:
+      FlutterError.onError = DatadogRum.instance.addFlutterError;
 
-        // Catch errors without crashing the app:
-        runZonedGuarded(() {
-          runApp(MyApp());
-        }, (error, stackTrace) {
-          DatadogRum.instance.addError(error, stackTrace);
-        });
-      }
+      // Catch errors without crashing the app:
+      runZonedGuarded(() {
+        runApp(MyApp());
+      }, (error, stackTrace) {
+        DatadogRum.instance.addError(error, stackTrace);
+      });
+    }
     ```
 1. Manually track additional events:
     ```dart
-      GestureDetector(
-        onTap: () {
-          DatadogRum.instance.addUserAction('EventTapped');
-        }
-      )
+    GestureDetector(onTap: () {
+      DatadogRum.instance.addUserAction('EventTapped');
+    })
     ```
 1. Manually track additional errors:
     ```dart
-      try {
-        throw StateError();
-      } catch (e, st) {
-        DatadogRum.instance.addError(e, st);
-      }
+    try {
+      throw StateError();
+    } catch (e, st) {
+      DatadogRum.instance.addError(e, st);
+    }
     ```
 
 ## FAQ

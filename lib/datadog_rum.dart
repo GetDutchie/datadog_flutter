@@ -18,12 +18,20 @@ class DatadogRum {
 
   const DatadogRum._();
 
+  /// dds a global attribute to all future RUM events.
+  Future<void> addAttribute(String attributeName, String value) async {
+    return await channel.invokeMethod('rumAddAttribute', {
+      'key': attributeName,
+      'value': value,
+    });
+  }
+
   Future<void> addError(Object error, StackTrace stackTrace) async {
     if (error is FlutterErrorDetails) {
       return await addFlutterError(error);
     }
 
-    return await channel.invokeMethod('addError', {
+    return await channel.invokeMethod('rumAddError', {
       'message': error.toString(),
       'stack': stackTrace.toString(),
     });
@@ -31,7 +39,7 @@ class DatadogRum {
 
   /// Convenience method for [addError]
   Future<void> addFlutterError(FlutterErrorDetails error) async {
-    return await channel.invokeMethod('addError', {
+    return await channel.invokeMethod('rumAddError', {
       'message': error.exceptionAsString(),
       'stack': error.stack.toString(),
     });
@@ -43,16 +51,23 @@ class DatadogRum {
     RUMAction action = RUMAction.tap,
     Map<String, dynamic> attributes = const <String, dynamic>{},
   }) async {
-    return await channel.invokeMethod('addUserAction', {
+    return await channel.invokeMethod('rumAddUserAction', {
       'name': name,
       'type': action.index,
       'attributes': attributes,
     });
   }
 
+  /// Removes a global attribute from all future RUM events.
+  Future<void> removeAttribute(String attributeName) async {
+    return await channel.invokeMethod('rumRemoveAttribute', {
+      'key': attributeName,
+    });
+  }
+
   /// Manually track entry to a screen. See [DatadogObserver].
   Future<void> startView(String screenName) async {
-    return await channel.invokeMethod('startView', {'key': screenName});
+    return await channel.invokeMethod('rumStartView', {'key': screenName});
   }
 
   /// Manually track a user event.
@@ -64,7 +79,7 @@ class DatadogRum {
     String name, {
     RUMAction action = RUMAction.tap,
   }) async {
-    return await channel.invokeMethod('startUserAction', {
+    return await channel.invokeMethod('rumStartUserAction', {
       'name': name,
       'type': action.index,
     });
@@ -72,7 +87,7 @@ class DatadogRum {
 
   /// Manually track exit from a screen. See [DatadogObserver].
   Future<void> stopView(String screenName) async {
-    return await channel.invokeMethod('stopView', {'key': screenName});
+    return await channel.invokeMethod('rumStopView', {'key': screenName});
   }
 
   /// Manually track a user event.
@@ -83,7 +98,7 @@ class DatadogRum {
     String name, {
     RUMAction action = RUMAction.tap,
   }) async {
-    return await channel.invokeMethod('stopUserAction', {
+    return await channel.invokeMethod('rumStopUserAction', {
       'name': name,
       'type': action.index,
     });
@@ -91,6 +106,6 @@ class DatadogRum {
 
   /// Manually track screen load time. See [DatadogObserver].
   Future<void> addTiming(String event) async {
-    return await channel.invokeMethod('addTiming', {'name': event});
+    return await channel.invokeMethod('rumAddTiming', {'name': event});
   }
 }
