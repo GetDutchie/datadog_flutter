@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
   final Logger otherLogger;
   final DatadogLogger datadogLogger;
 
-  MyApp(this.datadogLogger, {Key key})
+  MyApp(this.datadogLogger, {Key? key})
       : otherLogger = Logger('other logger'),
         super(key: key);
 
@@ -53,9 +53,9 @@ class MyApp extends StatelessWidget {
           title: Text('My Flutter Homepage'),
         ),
         body: Center(
-          child: FlatButton(
-            child: Text('Log to Datadog'),
+          child: TextButton(
             onPressed: () => otherLogger.fine('hello datadog'),
+            child: Text('Log to Datadog'),
           ),
         ),
       ),

@@ -18,7 +18,7 @@ class DatadogRum {
 
   const DatadogRum._();
 
-  /// dds a global attribute to all future RUM events.
+  /// Adds a global attribute to all future RUM events.
   Future<void> addAttribute(String attributeName, String value) async {
     return await channel.invokeMethod('rumAddAttribute', {
       'key': attributeName,

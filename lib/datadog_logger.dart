@@ -11,7 +11,7 @@ class DatadogLogger {
   ///
   /// This is different than `service` which is inherited from [DatadogFlutter]
   /// or can be defined as the `service` attribute per log.
-  final String loggerName;
+  final String? loggerName;
 
   DatadogLogger({
     this.loggerName,
@@ -65,7 +65,7 @@ class DatadogLogger {
   Future<void> log(
     String logMessage,
     Level logLevel, {
-    Map<String, dynamic> attributes,
+    Map<String, dynamic>? attributes,
   }) async {
     return await channel.invokeMethod('log', {
       'identifier': hashCode.toString(),
