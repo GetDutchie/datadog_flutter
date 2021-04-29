@@ -169,7 +169,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
           call.argument<String>("id"),
           call.argument<String>("name"),
           call.argument<String>("email"),
-          call.argument<Map<String, Any?>>("extraInfo")
+          call.argument<Map<String, Any?>>("extraInfo") ?: emptyMap()
         )
         result.success(true)
       }

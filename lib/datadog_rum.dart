@@ -18,12 +18,20 @@ class DatadogRum {
 
   const DatadogRum._();
 
+  /// dds a global attribute to all future RUM events.
+  Future<void> addAttribute(String attributeName, String value) async {
+    return await channel.invokeMethod('rumAddAttribute', {
+      'key': attributeName,
+      'value': value,
+    });
+  }
+
   Future<void> addError(Object error, StackTrace stackTrace) async {
     if (error is FlutterErrorDetails) {
       return await addFlutterError(error);
     }
 
-    return await channel.invokeMethod('addError', {
+    return await channel.invokeMethod('rumAddError', {
       'message': error.toString(),
       'stack': stackTrace.toString(),
     });
@@ -47,6 +55,13 @@ class DatadogRum {
       'name': name,
       'type': action.index,
       'attributes': attributes,
+    });
+  }
+
+  /// Removes a global attribute from all future RUM events.
+  Future<void> removeAttribute(String attributeName) async {
+    return await channel.invokeMethod('rumRemoveAttribute', {
+      'key': attributeName,
     });
   }
 

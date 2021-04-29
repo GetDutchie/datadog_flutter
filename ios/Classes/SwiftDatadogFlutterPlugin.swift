@@ -157,7 +157,7 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
           id: args?["id"] as? String,
           name: args?["name"] as? String,
           email: args?["email"] as? String,
-          extraInfo: args?["attributes"] as? Dictionary<String, Encodable>
+          extraInfo: args?["attributes"] as? Dictionary<String, Encodable> ?? [AttributeKey : AttributeValue]()
         )
         result(true)
 
