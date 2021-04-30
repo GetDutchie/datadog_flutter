@@ -45,7 +45,7 @@ ddLogger.log('time to cook pizza', Level.FINE, attributes: {
 
 ## Real User Monitoring
 
-RUM adds support for error, event, and screen tracking. The integration is partial (traces are not supported) and requires additional configuration.
+RUM adds support for error, event, and screen tracking. The integration is partial (resources are not supported; tracing is only available for iOS) and requires additional configuration.
 
 1. [Supply an application ID](https://docs.datadoghq.com/real_user_monitoring/#getting-started) to `initialize`:
     ```dart

@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import Datadog
+import Foundation
 
 public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
   private var loggers: [String: Logger] = [:]
@@ -160,6 +161,15 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
           extraInfo: args?["attributes"] as? Dictionary<String, Encodable> ?? [AttributeKey : AttributeValue]()
         )
         result(true)
+
+      case "traceCreateHeadersForRequest":
+        guard let tracer = Global.sharedTracer as? Tracer else {
+          return result([String : String]())
+        }
+        let writer = HTTPHeadersWriter()
+        let spanContext = tracer.createSpanContext()
+        writer.inject(spanContext)
+        result(writer.tracePropagationHTTPHeaders)
 
       case "updateTrackingConsent":
         let trackingConsent = numberToTrackingConsent(args?["trackingConsent"] as? NSNumber)
