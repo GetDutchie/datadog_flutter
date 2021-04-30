@@ -45,7 +45,7 @@ ddLogger.log('time to cook pizza', Level.FINE, attributes: {
 
 ## Real User Monitoring
 
-RUM adds support for error, event, and screen tracking. The integration is partial (traces are not supported) and requires additional configuration.
+RUM adds support for error, event, and screen tracking. The integration is partial (resources are not supported) and requires additional configuration.
 
 1. [Supply an application ID](https://docs.datadoghq.com/real_user_monitoring/#getting-started) to `initialize`:
     ```dart
@@ -96,6 +96,34 @@ RUM adds support for error, event, and screen tracking. The integration is parti
       DatadogRum.instance.addError(e, st);
     }
     ```
+
+## Tracing
+
+Associate your HTTP requests with your backend service. Be sure to setup (usually immediately after `DatadogFlutter.initialize`):
+
+```dart
+await DatadogTracing.initialize();
+```
+
+For one-off requests, instantiate a fresh client:
+
+```dart
+final httpClient = DatadogTracingHttpClient();
+// make requests
+final response = await httpClient.get('http://example.com');
+```
+
+For frameworks that use an internal client like Brick or Dio, compose the client:
+
+```dart
+RestProvider(
+  client: DatadogTracingHttpClient();
+)
+// or compose if another client is already being used:
+RestProvider(
+  client: DatadogTracingHttpClient(GZipHttpClient());
+)
+```
 
 ## FAQ
 
