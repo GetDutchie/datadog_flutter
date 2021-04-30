@@ -17,12 +17,18 @@ import com.datadog.android.rum.RumMonitor
 import com.datadog.android.rum.GlobalRum
 import com.datadog.android.rum.RumActionType
 import com.datadog.android.rum.RumErrorSource
+import com.datadog.android.tracing.AndroidTracer
+import io.opentracing.Span
+import io.opentracing.propagation.Format
+import io.opentracing.propagation.TextMapInject
+import io.opentracing.util.GlobalTracer
 import com.datadog.android.Datadog.initialize
 import android.content.Context
 
 /** DatadogFlutterPlugin */
 public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
   private var loggers = mutableMapOf<String, Logger>()
+  private var traces = mutableMapOf<String, Span>()
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     context = flutterPluginBinding.getApplicationContext()
@@ -171,6 +177,30 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
           call.argument<String>("email"),
           call.argument<Map<String, Any?>>("extraInfo") ?: emptyMap()
         )
+        result.success(true)
+      }
+      call.method == "tracingCreateHeadersForRequest" -> {
+        val tracer = GlobalTracer.get()
+        val span = tracer.buildSpan("<SPAN_NAME>").start()
+        var headers = mutableMapOf<String, String>()
+        tracer.inject(
+                span.context(),
+                Format.Builtin.TEXT_MAP_INJECT,
+                TextMapInject { key, value ->
+                  headers[key] = value
+                }
+        )
+        traces[headers["x-datadog-parent-id"]!!] = span
+        result.success(headers)
+      }
+      call.method == "tracingFinishSpan" -> {
+        traces[call.argument<String>("spanId")!!]?.finish()
+        traces.remove(call.argument<String>("spanId")!!)
+        result.success(true)
+      }
+      call.method == "tracingInitialize" -> {
+        val tracer = AndroidTracer.Builder().build()
+        GlobalTracer.registerIfAbsent(tracer)
         result.success(true)
       }
       call.method == "updateTrackingConsent" -> {
