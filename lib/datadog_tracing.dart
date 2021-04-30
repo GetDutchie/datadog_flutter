@@ -28,7 +28,6 @@ class DatadogTracingHttpClient extends http.BaseClient {
     // https://docs.datadoghq.com/real_user_monitoring/connect_rum_and_traces/?tab=iosrum
     newRequest.headers.addAll({'x-datadog-origin': 'rum'});
     newRequest.headers.addAll(request.headers);
-    print(traceHeaders);
 
     try {
       return await _innerClient.send(newRequest);
