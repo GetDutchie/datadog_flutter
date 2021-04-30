@@ -1,9 +1,11 @@
 import Flutter
 import UIKit
 import Datadog
+import Foundation
 
 public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
   private var loggers: [String: Logger] = [:]
+  private var traces: [String: OTSpan] = [:]
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "plugins.greenbits.com/datadog_flutter", binaryMessenger: registrar.messenger())
@@ -158,6 +160,30 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
           name: args?["name"] as? String,
           email: args?["email"] as? String,
           extraInfo: args?["attributes"] as? Dictionary<String, Encodable> ?? [AttributeKey : AttributeValue]()
+        )
+        result(true)
+
+      case "tracingCreateHeadersForRequest":
+        guard let tracer = Global.sharedTracer as? Tracer else {
+          return result([String : String]())
+        }
+        let writer = HTTPHeadersWriter()
+        let span = tracer.startSpan(operationName: "network request")
+        tracer.inject(spanContext: span.context, writer: writer)
+        let headers = writer.tracePropagationHTTPHeaders
+        traces[headers["x-datadog-parent-id"]!] = span
+        result(writer.tracePropagationHTTPHeaders)
+
+      case "tracingFinishSpan":
+        traces[args!["spanId"] as! String]?.finish()
+        traces.removeValue(forKey: args!["spanId"] as! String)
+        result(true)
+
+      case "tracingInitialize":
+        Global.sharedTracer = Tracer.initialize(
+          configuration: Tracer.Configuration(
+            sendNetworkInfo: true
+          )
         )
         result(true)
 

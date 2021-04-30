@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show FlutterErrorDetails;
 import 'package:datadog_flutter/src/channel.dart';
 
 enum RUMAction {
