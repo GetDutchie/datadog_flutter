@@ -5,6 +5,7 @@ import Foundation
 
 public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
   private var loggers: [String: Logger] = [:]
+  private var traces: [String: OTSpan] = [:]
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "plugins.greenbits.com/datadog_flutter", binaryMessenger: registrar.messenger())
@@ -162,14 +163,29 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         )
         result(true)
 
-      case "traceCreateHeadersForRequest":
+      case "tracingCreateHeadersForRequest":
         guard let tracer = Global.sharedTracer as? Tracer else {
           return result([String : String]())
         }
         let writer = HTTPHeadersWriter()
-        let spanContext = tracer.createSpanContext()
-        writer.inject(spanContext)
+        let span = tracer.startSpan(operationName: "network request")
+        tracer.inject(spanContext: span.context, writer: writer)
+        let headers = writer.tracePropagationHTTPHeaders
+        traces[headers["x-datadog-parent-id"]!] = span
         result(writer.tracePropagationHTTPHeaders)
+
+      case "tracingFinishSpan":
+        traces[args!["spanId"] as! String]?.finish()
+        traces.removeValue(forKey: args!["spanId"] as! String)
+        result(true)
+
+      case "tracingInitialize":
+        Global.sharedTracer = Tracer.initialize(
+            configuration: Tracer.Configuration(
+                sendNetworkInfo: true
+            )
+        )
+        result(true)
 
       case "updateTrackingConsent":
         let trackingConsent = numberToTrackingConsent(args?["trackingConsent"] as? NSNumber)
