@@ -120,7 +120,7 @@ RestProvider(
   client: DatadogTracingHttpClient();
 )
 
-// or compose, if another client is already being used:
+// or compose if another client is already being used:
 RestProvider(
   client: DatadogTracingHttpClient(GZipHttpClient());
 )

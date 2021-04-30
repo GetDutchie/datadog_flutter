@@ -181,9 +181,9 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
 
       case "tracingInitialize":
         Global.sharedTracer = Tracer.initialize(
-            configuration: Tracer.Configuration(
-                sendNetworkInfo: true
-            )
+          configuration: Tracer.Configuration(
+            sendNetworkInfo: true
+          )
         )
         result(true)
 
