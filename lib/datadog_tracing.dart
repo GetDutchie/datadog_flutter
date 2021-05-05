@@ -19,17 +19,15 @@ class DatadogTracingHttpClient extends http.BaseClient {
 
     if (request.body.isEmpty) return _innerClient.send(request);
 
-    var newRequest = http.Request(request.method, request.url);
     final traceHeaders = await DatadogTracing.createHeaders();
-    newRequest.headers.addAll(traceHeaders);
+    request.headers.addAll(traceHeaders);
     // To make sure the generated traces from Real User Monitoring
     // don’t affect your APM Index Spans counts.
     // https://docs.datadoghq.com/real_user_monitoring/connect_rum_and_traces/?tab=iosrum
-    newRequest.headers.addAll({'x-datadog-origin': 'rum'});
-    newRequest.headers.addAll(request.headers);
+    request.headers.addAll({'x-datadog-origin': 'rum'});
 
     try {
-      return await _innerClient.send(newRequest);
+      return await _innerClient.send(request);
     } finally {
       final spanId = traceHeaders['x-datadog-parent-id'];
       if (spanId != null) {
