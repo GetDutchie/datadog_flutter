@@ -96,24 +96,20 @@ RUM adds support for error, event, and screen tracking. The integration requires
       DatadogRum.instance.addError(e, st);
     }
     ```
-    
-## Resources
+1. Manually track [network requests or resources](https://docs.datadoghq.com/real_user_monitoring/android/data_collected/?tab=session):
+    ```dart
+    await DatadogRum.startResourceLoading(
+      aUniqueIdentifier,
+      url: 'https://example.com',
+      method: RUMResources.get,
+    );
 
-Manually track [network requests or resources](https://docs.datadoghq.com/real_user_monitoring/android/data_collected/?tab=session):
-
-```dart
-await DatadogResources.startLoading(
-  aUniqueIdentifier,
-  url: 'https://example.com',
-  method: RUMResources.get,
-);
-
-await DatadogResources.stopLoading(
-  aUniqueIdentifier,
-  statusCode: 500,
-  errorMessage: 'Internal Server Error' 
-)
-```
+    await DatadogRum.stopResourceLoading(
+      aUniqueIdentifier,
+      statusCode: 500,
+      errorMessage: 'Internal Server Error' ,
+    )
+    ```
 
 ## Tracing
 
