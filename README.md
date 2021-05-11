@@ -45,7 +45,7 @@ ddLogger.log('time to cook pizza', Level.FINE, attributes: {
 
 ## Real User Monitoring
 
-RUM adds support for error, event, and screen tracking. The integration is partial (resources are not supported) and requires additional configuration.
+RUM adds support for error, event, and screen tracking. The integration requires additional configuration for each service.
 
 1. [Supply an application ID](https://docs.datadoghq.com/real_user_monitoring/#getting-started) to `initialize`:
     ```dart
@@ -96,6 +96,24 @@ RUM adds support for error, event, and screen tracking. The integration is parti
       DatadogRum.instance.addError(e, st);
     }
     ```
+    
+## Resources
+
+Manually track [network requests or resources](https://docs.datadoghq.com/real_user_monitoring/android/data_collected/?tab=session):
+
+```dart
+await DatadogResources.startLoading(
+  aUniqueIdentifier,
+  url: 'https://example.com',
+  method: RUMResources.get,
+);
+
+await DatadogResources.stopLoading(
+  aUniqueIdentifier,
+  statusCode: 500,
+  errorMessage: 'Internal Server Error' 
+)
+```
 
 ## Tracing
 
