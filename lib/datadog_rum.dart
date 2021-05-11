@@ -46,6 +46,11 @@ class DatadogRum {
     });
   }
 
+  /// Manually track screen load time. See [DatadogObserver].
+  Future<void> addTiming(String event) async {
+    return await channel.invokeMethod('rumAddTiming', {'name': event});
+  }
+
   /// Manually track a user event.
   Future<void> addUserAction(
     String name, {
@@ -133,11 +138,6 @@ class DatadogRum {
     });
   }
 
-  /// Manually track exit from a screen. See [DatadogObserver].
-  Future<void> stopView(String screenName) async {
-    return await channel.invokeMethod('rumStopView', {'key': screenName});
-  }
-
   /// Manually track a user event.
   ///
   /// This is used to stop tracking long running user actions (e.g. "scroll"),
@@ -152,8 +152,8 @@ class DatadogRum {
     });
   }
 
-  /// Manually track screen load time. See [DatadogObserver].
-  Future<void> addTiming(String event) async {
-    return await channel.invokeMethod('rumAddTiming', {'name': event});
+  /// Manually track exit from a screen. See [DatadogObserver].
+  Future<void> stopView(String screenName) async {
+    return await channel.invokeMethod('rumStopView', {'key': screenName});
   }
 }
