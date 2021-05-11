@@ -20,7 +20,11 @@ import io.opentracing.propagation.TextMapInject
 import io.opentracing.util.GlobalTracer
 import com.datadog.android.Datadog.initialize
 import android.content.Context
-import com.datadog.android.rum.*
+import com.datadog.android.rum.RumMonitor
+import com.datadog.android.rum.GlobalRum
+import com.datadog.android.rum.RumActionType
+import com.datadog.android.rum.RumErrorSource
+import com.datadog.android.rum.RumResourceKind
 
 /** DatadogFlutterPlugin */
 public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
