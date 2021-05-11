@@ -72,6 +72,67 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         getLogger(args)?.removeTag(withKey: args!["key"] as! String)
         result(true)
 
+      case "resourceStartLoading":
+        guard let key = args?["key"] as? String,
+              let method = args?["method"] as? String,
+              let url = args?["url"] as? String,
+              let rumMethod = RUMMethod.init(rawValue: method) else {
+          return result(false)
+        }
+
+        let attributes = args?["attributes"] as? Dictionary<String, Encodable>
+        if attributes?.isEmpty ?? true {
+          Global.rum.startResourceLoading(resourceKey: key, httpMethod: rumMethod, urlString: url)
+        } else {
+          Global.rum.startResourceLoading(
+            resourceKey: key,
+            httpMethod: rumMethod,
+            urlString: url,
+            attributes: attributes!
+          )
+        }
+        result(true)
+
+      case "resourceStopLoading":
+        guard let key = args?["key"] as? String else {
+          return result(false)
+        }
+
+        let attributes = args?["attributes"] as? Dictionary<String, Encodable>
+        if let errorMessage = args?["errorMessage"] as? String {
+          if attributes?.isEmpty ?? true {
+            Global.rum.stopResourceLoadingWithError(
+              resourceKey: key,
+              errorMessage: errorMessage
+            )
+          } else {
+            Global.rum.stopResourceLoadingWithError(
+              resourceKey: key,
+              errorMessage: errorMessage,
+              attributes: attributes!
+            )
+          }
+        } else {
+          if let kind = args?["kind"] as? String,
+             let resourceType = RUMResourceType.init(rawValue: kind) {
+            if attributes?.isEmpty ?? true {
+              Global.rum.stopResourceLoading(
+                resourceKey: key,
+                statusCode: args?["statusCode"] as? Int,
+                kind: resourceType
+              )
+            } else {
+              Global.rum.stopResourceLoading(
+                resourceKey: key,
+                statusCode: args?["statusCode"] as? Int,
+                kind: resourceType,
+                attributes: attributes!
+              )
+            }
+          }
+        }
+        result(true)
+
       case "rumAddAttribute":
         Global.rum.addAttribute(
           forKey: args!["key"] as! String,
@@ -181,9 +242,9 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
 
       case "tracingInitialize":
         Global.sharedTracer = Tracer.initialize(
-            configuration: Tracer.Configuration(
-                sendNetworkInfo: true
-            )
+          configuration: Tracer.Configuration(
+            sendNetworkInfo: true
+          )
         )
         result(true)
 

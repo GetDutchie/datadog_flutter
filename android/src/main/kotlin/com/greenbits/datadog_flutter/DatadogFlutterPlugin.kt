@@ -13,10 +13,6 @@ import com.datadog.android.Datadog
 import com.datadog.android.core.configuration.Configuration
 import com.datadog.android.core.configuration.Credentials
 import com.datadog.android.privacy.TrackingConsent
-import com.datadog.android.rum.RumMonitor
-import com.datadog.android.rum.GlobalRum
-import com.datadog.android.rum.RumActionType
-import com.datadog.android.rum.RumErrorSource
 import com.datadog.android.tracing.AndroidTracer
 import io.opentracing.Span
 import io.opentracing.propagation.Format
@@ -24,6 +20,11 @@ import io.opentracing.propagation.TextMapInject
 import io.opentracing.util.GlobalTracer
 import com.datadog.android.Datadog.initialize
 import android.content.Context
+import com.datadog.android.rum.RumMonitor
+import com.datadog.android.rum.GlobalRum
+import com.datadog.android.rum.RumActionType
+import com.datadog.android.rum.RumErrorSource
+import com.datadog.android.rum.RumResourceKind
 
 /** DatadogFlutterPlugin */
 public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
@@ -113,6 +114,39 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       }
       call.method == "loggerRemoveTag" -> {
         getLogger(call)?.removeTagsWithKey(call.argument<String>("key")!!)
+        result.success(true)
+      }
+      call.method == "resourceStartLoading" -> {
+        val key = call.argument<String>("key")!!
+        val method = call.argument<String>("method")!!
+        val url = call.argument<String>("url")!!
+        val attributes = call.argument<Map<String, Any?>>("attributes")
+        GlobalRum.get().startResource(key, method, url, attributes)
+        result.success(true)
+      }
+      call.method == "resourceStopLoading" -> {
+        val key = call.argument<String>("key")!!
+        val attributes = call.argument<Map<String, Any?>>("attributes")
+        val errorMessage = call.argument<String>("errorMessage")
+
+        if (errorMessage != null) {
+          GlobalRum.get().stopResourceWithError(
+            key,
+            call.argument<Int>("statusCode"),
+            errorMessage!!,
+            RumErrorSource.NETWORK,
+            Exception("DatadogFlutterStubError")
+          )
+        } else {
+          GlobalRum.get().stopResource(
+            key,
+            call.argument<Int>("statusCode"),
+            null,
+            RumResourceKind.valueOf(call.argument<String>("kind")!!),
+            attributes ?: emptyMap<String, Any?>()
+          )
+        }
+
         result.success(true)
       }
       call.method == "rumAddAttribute" -> {
