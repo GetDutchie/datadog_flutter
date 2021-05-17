@@ -101,8 +101,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       call.method == "loggerCreateLogger" -> {
         val builder = Logger.Builder()
                 .setNetworkInfoEnabled(true)
-                .setServiceName(call.argument<String>("serviceName")!!)
-
+        
         if (call.argument<String>("loggerName") != null) {
           builder.setLoggerName(call.argument<String>("loggerName")!!)
         }
