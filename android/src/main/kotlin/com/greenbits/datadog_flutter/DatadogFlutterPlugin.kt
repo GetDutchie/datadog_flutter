@@ -121,7 +121,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         val key = call.argument<String>("key")!!
         val method = call.argument<String>("method")!!
         val url = call.argument<String>("url")!!
-        val attributes = call.argument<Map<String, Any?>>("attributes")
+        val attributes = call.argument<Map<String, Any?>>("attributes") ?: emptyMap<String, Any?>()
         GlobalRum.get().startResource(key, method, url, attributes)
         result.success(true)
       }
