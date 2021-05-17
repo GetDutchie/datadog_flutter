@@ -88,16 +88,6 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
           val monitor = RumMonitor.Builder().build()
           GlobalRum.registerIfAbsent(monitor)
         }
-      }
-      call.method == "createLogger" -> {
-        val builder = Logger.Builder()
-                .setNetworkInfoEnabled(true)
-                .setServiceName(call.argument<String>("serviceName")!!)
-
-        if (call.argument<String>("loggerName") != null) {
-          builder.setLoggerName(call.argument<String>("loggerName")!!)
-        }
-        loggers[call.argument<String>("identifier")!!] = builder.build()
         result.success(true)
       }
       call.method == "loggerAddAttribute" -> {
@@ -106,6 +96,17 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       }
       call.method == "loggerAddTag" -> {
         getLogger(call)?.addTag(call.argument<String>("key")!!, call.argument<String>("value")!!)
+        result.success(true)
+      }
+      call.method == "loggerCreateLogger" -> {
+        val builder = Logger.Builder()
+                .setNetworkInfoEnabled(true)
+                .setServiceName(call.argument<String>("serviceName")!!)
+
+        if (call.argument<String>("loggerName") != null) {
+          builder.setLoggerName(call.argument<String>("loggerName")!!)
+        }
+        loggers[call.argument<String>("identifier")!!] = builder.build()
         result.success(true)
       }
       call.method == "loggerRemoveAttribute" -> {
@@ -160,6 +161,10 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
           call.argument<String>("stack")!!,
           emptyMap()
         )
+        result.success(true)
+      }
+      call.method == "rumAddTiming" -> {
+        GlobalRum.get().addTiming(call.argument<String>("name")!!)
         result.success(true)
       }
       call.method == "rumAddUserAction" -> {
@@ -295,7 +300,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
           }
         }
 
-        result.success(null)
+        result.success(true)
       }
       else -> result.notImplemented()
     }

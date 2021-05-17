@@ -17,7 +17,7 @@ class DatadogLogger {
     this.loggerName,
     bool bindOnRecord = true,
   }) {
-    channel.invokeMethod('createLogger', {
+    channel.invokeMethod('loggerCreateLogger', {
       'identifier': hashCode.toString(),
       'loggerName': loggerName,
     });

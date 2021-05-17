@@ -41,15 +41,6 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
 
         result(true)
 
-      case "createLogger":
-        var builder = Logger.builder
-
-        if let loggerName = args?["loggerName"] as? String {
-          builder = builder.set(loggerName: loggerName)
-        }
-        loggers[args!["identifier"] as! String] = builder.build()
-        result(true)
-
       case "loggerAddAttribute":
         getLogger(args)?.addAttribute(
           forKey: args!["key"] as! String,
@@ -62,6 +53,15 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
           withKey: args!["key"] as! String,
           value: args!["value"] as! String
         )
+        result(true)
+
+      case "loggerCreateLogger":
+        var builder = Logger.builder
+
+        if let loggerName = args?["loggerName"] as? String {
+          builder = builder.set(loggerName: loggerName)
+        }
+        loggers[args!["identifier"] as! String] = builder.build()
         result(true)
 
       case "loggerRemoveAttribute":
