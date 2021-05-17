@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:datadog_flutter/datadog_observer.dart';
 import 'package:datadog_flutter/datadog_rum.dart';
 import 'package:datadog_flutter/datadog_logger.dart';
+import 'package:datadog_flutter/datadog_tracing.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -11,6 +12,8 @@ import 'package:datadog_flutter/datadog_flutter.dart';
 // Ideally, your token is encrypted if it must be committed or its added at build
 const DATADOG_CLIENT_TOKEN = 'YOUR_DATADOG_CLIENT_TOKEN';
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await DatadogFlutter.initialize(
     clientToken: DATADOG_CLIENT_TOKEN,
     environment: 'production',
@@ -22,6 +25,8 @@ void main() async {
   final ddLogger = DatadogLogger();
   // Capture Flutter errors automatically:
   FlutterError.onError = DatadogRum.instance.addFlutterError;
+
+  await DatadogTracing.initialize();
 
   // Catch errors without crashing the app:
   runZonedGuarded(() {
