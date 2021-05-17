@@ -1,6 +1,6 @@
 name: datadog_flutter
 description: Community implementation of native bindings for Datadog's SDK. Not an official package.
-version: 0.1.0-dev.5
+version: 0.1.0-dev.6
 homepage: https://github.com/greenbits/datadog_flutter
 
 environment:
