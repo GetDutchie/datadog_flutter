@@ -63,7 +63,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         val rumApplicationId = call.argument<String>("androidRumApplicationId")
         var configBuilder = Configuration.Builder(
           true,
-          false,
+          true,
           rumApplicationId != null,
           rumApplicationId != null
         )
@@ -101,7 +101,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       call.method == "loggerCreateLogger" -> {
         val builder = Logger.Builder()
                 .setNetworkInfoEnabled(true)
-        
+
         if (call.argument<String>("loggerName") != null) {
           builder.setLoggerName(call.argument<String>("loggerName")!!)
         }
