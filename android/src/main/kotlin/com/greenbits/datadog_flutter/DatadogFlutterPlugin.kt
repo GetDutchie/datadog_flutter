@@ -63,7 +63,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         val rumApplicationId = call.argument<String>("androidRumApplicationId")
         var configBuilder = Configuration.Builder(
           true,
-          false,
+          true,
           rumApplicationId != null,
           rumApplicationId != null
         )
@@ -101,7 +101,6 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       call.method == "loggerCreateLogger" -> {
         val builder = Logger.Builder()
                 .setNetworkInfoEnabled(true)
-                .setServiceName(call.argument<String>("serviceName")!!)
 
         if (call.argument<String>("loggerName") != null) {
           builder.setLoggerName(call.argument<String>("loggerName")!!)
@@ -121,7 +120,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         val key = call.argument<String>("key")!!
         val method = call.argument<String>("method")!!
         val url = call.argument<String>("url")!!
-        val attributes = call.argument<Map<String, Any?>>("attributes")
+        val attributes = call.argument<Map<String, Any?>>("attributes") ?: emptyMap<String, Any?>()
         GlobalRum.get().startResource(key, method, url, attributes)
         result.success(true)
       }
