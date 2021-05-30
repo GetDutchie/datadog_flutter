@@ -59,9 +59,9 @@ class DatadogTracing {
     return await channel.invokeMapMethod<String, String>(
       'tracingCreateHeadersForRequest',
       {
-        'method': method,
+        if (method != null) 'method': method,
         'resourceName': resourceName ?? 'network request',
-        'url': url,
+        if (url != null) 'url': url,
       },
     );
   }
@@ -71,7 +71,7 @@ class DatadogTracing {
   static Future<void> finishSpan(String spanId, {int statusCode}) async {
     return await channel.invokeMethod('tracingFinishSpan', {
       'spanId': spanId,
-      'statusCode': statusCode,
+      if (statusCode != null) 'statusCode': statusCode,
     });
   }
 }
