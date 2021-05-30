@@ -53,14 +53,14 @@ class DatadogTracing {
 
   /// Generates headers to inject in [DatadogTracingHttpClient].
   static Future<Map<String, String>> createHeaders({
-    String method,
+    String? method,
     String? resourceName,
     String? url,
   }) async {
     final result = await channel.invokeMapMethod<String, String>(
       'tracingCreateHeadersForRequest',
       {
-        'method': method,
+        if (method != null) 'method': method,
         'resourceName': resourceName ?? 'network request',
         if (url != null) 'url': url,
       },
