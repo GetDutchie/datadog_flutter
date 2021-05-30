@@ -4,6 +4,9 @@ import 'package:http/http.dart' as http;
 
 /// Add trace headers to all requests
 class DatadogTracingHttpClient extends http.BaseClient {
+  /// Populates APM's "RESOURCE" column. Defaults to `network request`.
+  final String resourceName;
+
   /// A normal HTTP client, treated like a manual `super`
   /// as detailed by [the Dart team](https://github.com/dart-lang/http/blob/378179845420caafbf7a34d47b9c22104753182a/README.md#using)
   ///
@@ -11,8 +14,9 @@ class DatadogTracingHttpClient extends http.BaseClient {
   final http.Client _innerClient;
 
   DatadogTracingHttpClient(
-    http.Client innerClient,
-  ) : _innerClient = innerClient ?? http.Client();
+    http.Client innerClient, {
+    this.resourceName = 'network request',
+  }) : _innerClient = innerClient ?? http.Client();
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
@@ -20,6 +24,7 @@ class DatadogTracingHttpClient extends http.BaseClient {
 
     final traceHeaders = await DatadogTracing.createHeaders(
       method: request.method,
+      resourceName: resourceName,
       url: request.url.toString(),
     );
     request.headers.addAll(traceHeaders);
@@ -44,25 +49,20 @@ class DatadogTracingHttpClient extends http.BaseClient {
 }
 
 class DatadogTracing {
-  /// Attached to every traced request. This can be overriden on a per-request
-  /// basis with `resourceName` for [createHeaders].
-  /// Defaults to `network request`.
-  static String defaultResourceName = 'network request';
-
   static Future<void> initialize() async {
     return await channel.invokeMethod('tracingInitialize');
   }
 
   static Future<Map<String, String>> createHeaders({
     String method,
-    String resourceName,
+    @required String resourceName,
     String url,
   }) async {
     return await channel.invokeMapMethod<String, String>(
       'tracingCreateHeadersForRequest',
       {
         if (method != null) 'method': method,
-        'resourceName': resourceName ?? defaultResourceName,
+        'resourceName': resourceName,
         if (url != null) 'url': url,
       },
     );
