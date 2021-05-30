@@ -44,6 +44,11 @@ class DatadogTracingHttpClient extends http.BaseClient {
 }
 
 class DatadogTracing {
+  /// Attached to every traced request. This can be overriden on a per-request
+  /// basis with `resourceName` for [createHeaders].
+  /// Defaults to `network request`.
+  static String defaultResourceName = 'network request';
+
   static Future<void> initialize() async {
     return await channel.invokeMethod('tracingInitialize');
   }
@@ -57,7 +62,7 @@ class DatadogTracing {
       'tracingCreateHeadersForRequest',
       {
         if (method != null) 'method': method,
-        'resourceName': resourceName ?? 'network request',
+        'resourceName': resourceName ?? defaultResourceName,
         if (url != null) 'url': url,
       },
     );
