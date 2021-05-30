@@ -229,15 +229,26 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
           return result([String : String]())
         }
         let writer = HTTPHeadersWriter()
-        let span = tracer.startSpan(operationName: "network request")
+        let span = tracer.startSpan(operationName: args!["resourceName"] as! String)
+        if let method = args?["method"] as? String {
+          span.setTag(key: "http.method", value: method)
+        }
+        if let url = args?["url"] as? String {
+          span.setTag(key: "http.url", value: url)
+        }
         tracer.inject(spanContext: span.context, writer: writer)
         let headers = writer.tracePropagationHTTPHeaders
         traces[headers["x-datadog-parent-id"]!] = span
         result(writer.tracePropagationHTTPHeaders)
 
       case "tracingFinishSpan":
-        traces[args!["spanId"] as! String]?.finish()
-        traces.removeValue(forKey: args!["spanId"] as! String)
+        let spanId = args!["spanId"] as! String
+        let span = traces[spanId]
+        if let statusCode = args?["statusCode"] as? NSNumber {
+          span?.setTag(key: "http.status_code", value: statusCode.intValue)
+        }
+        span?.finish()
+        traces.removeValue(forKey: spanId)
         result(true)
 
       case "tracingInitialize":
