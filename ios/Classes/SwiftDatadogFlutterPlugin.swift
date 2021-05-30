@@ -244,8 +244,8 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
       case "tracingFinishSpan":
         let spanId = args!["spanId"] as! String
         let span = traces[spanId]
-        if let statusCode = args?["statusCode"] as? Encodable {
-          span?.setTag(key: "http.status_code", value: statusCode)
+        if let statusCode = args?["statusCode"] as? NSNumber {
+          span?.setTag(key: "http.status_code", value: statusCode.intValue)
         }
         span?.finish()
         traces.removeValue(forKey: spanId)
