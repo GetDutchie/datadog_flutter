@@ -39,7 +39,7 @@ class DatadogTracingHttpClient extends http.BaseClient {
       if (spanId != null) {
         await DatadogTracing.finishSpan(
           spanId,
-          statusCode: response.statusCode,
+          statusCode: response?.statusCode,
         );
       }
     }
