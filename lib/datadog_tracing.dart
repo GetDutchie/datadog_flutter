@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 /// Add trace headers to all requests
 class DatadogTracingHttpClient extends http.BaseClient {
-  /// Populates APM's "RESOURCE" column. Defaults to `network request`.
+  /// Populates APM's "RESOURCE" column. Defaults to `dart.http`.
   final String resourceName;
 
   /// A normal HTTP client, treated like a manual `super`
@@ -14,7 +14,7 @@ class DatadogTracingHttpClient extends http.BaseClient {
 
   DatadogTracingHttpClient(
     http.Client? innerClient, {
-    this.resourceName = 'network request',
+    this.resourceName = 'dart.http',
   }) : _innerClient = innerClient ?? http.Client();
 
   @override
