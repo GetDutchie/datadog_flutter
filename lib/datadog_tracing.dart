@@ -19,19 +19,26 @@ class DatadogTracingHttpClient extends http.BaseClient {
 
     if (request.body.isEmpty) return _innerClient.send(request);
 
-    final traceHeaders = await DatadogTracing.createHeaders();
+    final traceHeaders = await DatadogTracing.createHeaders(
+      method: request.method,
+      url: request.url.toString(),
+    );
     request.headers.addAll(traceHeaders);
     // To make sure the generated traces from Real User Monitoring
     // don’t affect your APM Index Spans counts.
     // https://docs.datadoghq.com/real_user_monitoring/connect_rum_and_traces/?tab=iosrum
     request.headers.addAll({'x-datadog-origin': 'rum'});
 
+    http.StreamedResponse? response;
     try {
-      return await _innerClient.send(request);
+      return response = await _innerClient.send(request);
     } finally {
       final spanId = traceHeaders['x-datadog-parent-id'];
       if (spanId != null) {
-        await DatadogTracing.finishSpan(spanId);
+        await DatadogTracing.finishSpan(
+          spanId,
+          statusCode: response?.statusCode,
+        );
       }
     }
   }
@@ -45,13 +52,27 @@ class DatadogTracing {
   }
 
   /// Generates headers to inject in [DatadogTracingHttpClient].
-  static Future<Map<String, String>> createHeaders() async {
-    final result = await channel.invokeMapMethod<String, String>('tracingCreateHeadersForRequest');
+  static Future<Map<String, String>> createHeaders({
+    String method,
+    String? resourceName,
+    String? url,
+  }) async {
+    final result = await channel.invokeMapMethod<String, String>(
+      'tracingCreateHeadersForRequest',
+      {
+        'method': method,
+        'resourceName': resourceName ?? 'network request',
+        if (url != null) 'url': url,
+      },
+    );
     return result ?? <String, String>{};
   }
 
   /// Acknowledges the completion of a task.
-  static Future<void> finishSpan(String spanId) async {
-    return await channel.invokeMethod('tracingFinishSpan', {'spanId': spanId});
+  static Future<void> finishSpan(String spanId, {int statusCode}) async {
+    return await channel.invokeMethod('tracingFinishSpan', {
+      'spanId': spanId,
+      if (statusCode != null) 'statusCode': statusCode,
+    });
   }
 }

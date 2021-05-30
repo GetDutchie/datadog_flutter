@@ -219,7 +219,15 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       }
       call.method == "tracingCreateHeadersForRequest" -> {
         val tracer = GlobalTracer.get()
-        val span = tracer.buildSpan("<SPAN_NAME>").start()
+        val span = tracer.buildSpan(call.argument<String>("resourceName")!!).start()
+        val method = call.argument<String>("method")
+        if (method != null) {
+            span.setTag("http.method", method!! as String)
+        }
+        val url = call.argument<String>("url")
+        if (url != null) {
+            span.setTag("http.url", url!! as String)
+        }
         var headers = mutableMapOf<String, String>()
         tracer.inject(
                 span.context(),
@@ -232,8 +240,14 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         result.success(headers)
       }
       call.method == "tracingFinishSpan" -> {
-        traces[call.argument<String>("spanId")!!]?.finish()
-        traces.remove(call.argument<String>("spanId")!!)
+        val spanId = call.argument<String>("spanId")!!
+        val span = traces[spanId]
+        val statusCode = call.argument<Number>("statusCode")
+        if (statusCode != null) {
+            span?.setTag("http.status_code", statusCode!! as Number)
+        }
+        span?.finish()
+        traces.remove(spanId)
         result.success(true)
       }
       call.method == "tracingInitialize" -> {
