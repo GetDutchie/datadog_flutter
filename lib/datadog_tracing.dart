@@ -18,20 +18,29 @@ class DatadogTracingHttpClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     if (request is! http.Request) return await _innerClient.send(request);
 
-    if ((request as http.Request).body.isEmpty) return await _innerClient.send(request);
-    final traceHeaders = await DatadogTracing.createHeaders();
+    if ((request as http.Request).body.isEmpty) {
+      return await _innerClient.send(request);
+    }
+    final traceHeaders = await DatadogTracing.createHeaders(
+      method: request.method,
+      url: request.url.toString(),
+    );
     request.headers.addAll(traceHeaders);
     // To make sure the generated traces from Real User Monitoring
     // don’t affect your APM Index Spans counts.
     // https://docs.datadoghq.com/real_user_monitoring/connect_rum_and_traces/?tab=iosrum
     request.headers.addAll({'x-datadog-origin': 'rum'});
 
+    http.StreamedResponse response;
     try {
-      return await _innerClient.send(request);
+      return response = await _innerClient.send(request);
     } finally {
       final spanId = traceHeaders['x-datadog-parent-id'];
       if (spanId != null) {
-        await DatadogTracing.finishSpan(spanId);
+        await DatadogTracing.finishSpan(
+          spanId,
+          statusCode: response.statusCode,
+        );
       }
     }
   }
@@ -42,13 +51,27 @@ class DatadogTracing {
     return await channel.invokeMethod('tracingInitialize');
   }
 
-  static Future<Map<String, String>> createHeaders() async {
-    return await channel.invokeMapMethod<String, String>('tracingCreateHeadersForRequest');
+  static Future<Map<String, String>> createHeaders({
+    String method,
+    String resourceName,
+    String url,
+  }) async {
+    return await channel.invokeMapMethod<String, String>(
+      'tracingCreateHeadersForRequest',
+      {
+        'method': method,
+        'resourceName': resourceName ?? 'network request',
+        'url': url,
+      },
+    );
   }
 
   /// Acknowledges the completion of a task.
   @protected
-  static Future<void> finishSpan(String spanId) async {
-    return await channel.invokeMethod('tracingFinishSpan', {'spanId': spanId});
+  static Future<void> finishSpan(String spanId, {int statusCode}) async {
+    return await channel.invokeMethod('tracingFinishSpan', {
+      'spanId': spanId,
+      'statusCode': statusCode,
+    });
   }
 }
