@@ -18,9 +18,6 @@ class DatadogTracingHttpClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     if (request is! http.Request) return await _innerClient.send(request);
 
-    if ((request as http.Request).body.isEmpty) {
-      return await _innerClient.send(request);
-    }
     final traceHeaders = await DatadogTracing.createHeaders(
       method: request.method,
       url: request.url.toString(),
