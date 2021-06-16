@@ -1,6 +1,5 @@
 import 'package:datadog_flutter/src/channel.dart';
 import 'package:meta/meta.dart';
-import 'package:pedantic/pedantic.dart' show unawaited;
 import 'package:http/http.dart' as http;
 
 /// Add trace headers to all requests
@@ -41,10 +40,12 @@ class DatadogTracingHttpClient extends http.BaseClient {
       final spanId = traceHeaders['x-datadog-parent-id'];
       if (spanId != null) {
         // the native DD layer should not delay completion of the request
-        unawaited(DatadogTracing.finishSpan(
+        // errors are also swallowed
+        // ignore: unawaited_futures
+        DatadogTracing.finishSpan(
           spanId,
           statusCode: response?.statusCode,
-        ));
+        ).catchError((_) => null);
       }
     }
   }
