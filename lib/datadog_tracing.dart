@@ -39,10 +39,13 @@ class DatadogTracingHttpClient extends http.BaseClient {
     } finally {
       final spanId = traceHeaders['x-datadog-parent-id'];
       if (spanId != null) {
-        await DatadogTracing.finishSpan(
+        // the native DD layer should not delay completion of the request
+        // errors are also swallowed
+        // ignore: unawaited_futures
+        DatadogTracing.finishSpan(
           spanId,
           statusCode: response?.statusCode,
-        );
+        ).catchError((_) => null);
       }
     }
   }
