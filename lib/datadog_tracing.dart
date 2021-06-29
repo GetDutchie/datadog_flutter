@@ -35,7 +35,7 @@ class DatadogTracingHttpClient extends http.BaseClient {
 
     http.StreamedResponse response;
     try {
-      return response = await _innerClient.send(request);
+      response = await _innerClient.send(request);
     } finally {
       final spanId = traceHeaders['x-datadog-parent-id'];
       if (spanId != null) {
@@ -48,6 +48,8 @@ class DatadogTracingHttpClient extends http.BaseClient {
         ).catchError((_) => null);
       }
     }
+
+    return response;
   }
 }
 
