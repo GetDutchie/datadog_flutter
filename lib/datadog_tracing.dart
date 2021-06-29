@@ -12,8 +12,8 @@ class DatadogTracingHttpClient extends http.BaseClient {
   /// By default, a new [http.Client] will be instantiated and used.
   final http.Client _innerClient;
 
-  DatadogTracingHttpClient(
-    http.Client? innerClient, {
+  DatadogTracingHttpClient({
+    http.Client? innerClient,
     this.resourceName = 'dart.http',
   }) : _innerClient = innerClient ?? http.Client();
 
