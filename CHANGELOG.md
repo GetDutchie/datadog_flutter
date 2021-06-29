@@ -1,4 +1,7 @@
 ## Unreleased
+## 0.1.0
+
+* **BREAKING CHANGE** `DatadogTracingHttpClient` accepts `innerClient` as a named argument instead of a positional one. To migrate, add `innerClient:` ahead of the first argument.
 
 ## 0.1.0+1
 
