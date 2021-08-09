@@ -21,7 +21,6 @@ class DatadogObserver extends RouteObserver<PageRoute<dynamic>> {
       _sendScreenView(route.settings.name, previousRoute?.settings?.name);
     }
     super.didPush(route, previousRoute);
-    DatadogRum.instance.addTiming('push');
   }
 
   @override
@@ -30,7 +29,6 @@ class DatadogObserver extends RouteObserver<PageRoute<dynamic>> {
       _sendScreenView(newRoute.settings.name, oldRoute?.settings?.name);
     }
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
-    DatadogRum.instance.addTiming('replace');
   }
 
   @override
@@ -39,6 +37,5 @@ class DatadogObserver extends RouteObserver<PageRoute<dynamic>> {
       _sendScreenView(route.settings.name, previousRoute?.settings?.name);
     }
     super.didPop(route, previousRoute);
-    DatadogRum.instance.addTiming('pop');
   }
 }
