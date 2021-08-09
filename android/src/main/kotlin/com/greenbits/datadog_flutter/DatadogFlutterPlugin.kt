@@ -228,15 +228,14 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         if (url != null) {
             span.setTag("http.url", url!! as String)
         }
+        // https://github.com/DataDog/dd-sdk-android/blob/0afa2a8867c72405b93553a6e7ebcc4a2f1d9676/dd-sdk-android/src/main/java/com/datadog/opentracing/propagation/DatadogHttpCodec.java#L39-L52
         var headers = mutableMapOf<String, String>()
-        tracer.inject(
-                span.context(),
-                Format.Builtin.TEXT_MAP_INJECT,
-                TextMapInject { key, value ->
-                  headers[key] = value
-                }
-        )
-        traces[headers["x-datadog-parent-id"]!!] = span
+        val context = span.context()
+        val spanId = context.toSpanId().toString()
+        headers["x-datadog-trace-id"] = context.toTraceId().toString()
+        headers["x-datadog-parent-id"] = spanId
+
+        traces[spanId] = span
         result.success(headers)
       }
       call.method == "tracingFinishSpan" -> {
