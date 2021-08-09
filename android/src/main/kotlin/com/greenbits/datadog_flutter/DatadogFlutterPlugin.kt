@@ -232,8 +232,8 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         var headers = mutableMapOf<String, String>()
         val context = span.context()
         val spanId = context.toSpanId().toString()
-        headers["x-datadog-trace-id"] = context.toTraceId().toString()
-        headers["x-datadog-parent-id"] = spanId
+        headers.put("x-datadog-trace-id", context.toTraceId().toString())
+        headers.put("x-datadog-parent-id", spanId)
 
         traces[spanId] = span
         result.success(headers)
