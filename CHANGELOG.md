@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Fixes a null-safe exception at the Android level when using DatadogTracing. 
+* Remove `addTiming` from the `DatadogObserver` and update docs to use `addTiming` _after_ the screen is interactive. 
 
 ## 1.1.1
 
