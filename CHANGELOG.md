@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Remove `addTiming` from the `DatadogObserver` and update docs to use `addTiming` _after_ the screen is interactive. 
+
 ## 1.1.1
 
 * **BREAKING CHANGE** `DatadogTracingHttpClient` accepts `innerClient` as a named argument instead of a positional one. To migrate, add `innerClient:` ahead of the first argument.
