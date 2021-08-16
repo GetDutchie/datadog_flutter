@@ -46,7 +46,12 @@ class DatadogRum {
     });
   }
 
-  /// Manually track screen load time. See [DatadogObserver].
+  /// Manually log screen load time.
+  ///
+  /// This method should be invoked only once after the screen is
+  /// interactive and in some cases after any required network requests
+  /// have been completed. For example, in the screen's `initState`
+  /// method or after the initial state of BLoC. See [DatadogObserver].
   Future<void> addTiming(String event) async {
     return await channel.invokeMethod('rumAddTiming', {'name': event});
   }
