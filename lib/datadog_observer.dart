@@ -10,32 +10,36 @@ class DatadogObserver extends RouteObserver<PageRoute<dynamic>> {
   /// with a non-empty `rumApplicationId`.
   DatadogObserver();
 
-  Future<void> _sendScreenView(String? newRoute, String? oldRoute) async {
-    if (oldRoute != null) await DatadogRum.instance.stopView(oldRoute);
-    if (newRoute != null) await DatadogRum.instance.startView(newRoute);
+  Future<void> _sendScreenView(Route? route, Route? previousRoute) async {
+    if (previousRoute is PageRoute) {
+      String? previousRouteName = previousRoute.settings.name;
+      if (previousRouteName != null) {
+        DatadogRum.instance.stopView(previousRouteName);
+      }
+    }
+    if (route is PageRoute) {
+      String? routeName = route.settings.name;
+      if (routeName != null) {
+        DatadogRum.instance.startView(routeName);
+      }
+    }
   }
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    if (route is PageRoute && previousRoute is PageRoute) {
-      _sendScreenView(route.settings.name, previousRoute.settings.name);
-    }
+  void didPush(Route route, Route? previousRoute) {
+    _sendScreenView(route, previousRoute);
     super.didPush(route, previousRoute);
   }
 
   @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    if (newRoute is PageRoute && oldRoute is PageRoute) {
-      _sendScreenView(newRoute.settings.name, oldRoute.settings.name);
-    }
+  void didReplace({Route? newRoute, Route? oldRoute}) {
+    _sendScreenView(newRoute, oldRoute);
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
   }
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    if (previousRoute is PageRoute && route is PageRoute) {
-      _sendScreenView(route.settings.name, previousRoute.settings.name);
-    }
+  void didPop(Route route, Route? previousRoute) {
+    _sendScreenView(route, previousRoute);
     super.didPop(route, previousRoute);
   }
 }
