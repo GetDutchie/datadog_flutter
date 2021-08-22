@@ -1,7 +1,10 @@
 ## Unreleased
 
-* Fixes a null-safe exception at the Android level when using DatadogTracing. 
-* Remove `addTiming` from the `DatadogObserver` and update docs to use `addTiming` _after_ the screen is interactive. 
+## 1.2.0
+
+* Fixes a null-safe exception at the Android level when using DatadogTracing.
+* Remove `addTiming` from the `DatadogObserver` and update docs to use `addTiming` _after_ the screen is interactive.
+* Track page route independent of previous/next being a `PageRoute` (#40)
 
 ## 1.1.1
 

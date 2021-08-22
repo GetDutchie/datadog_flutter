@@ -12,13 +12,13 @@ class DatadogObserver extends RouteObserver<PageRoute<dynamic>> {
 
   Future<void> _sendScreenView(Route? route, Route? previousRoute) async {
     if (previousRoute is PageRoute) {
-      var previousRouteName = previousRoute.settings.name;
+      final previousRouteName = previousRoute.settings.name;
       if (previousRouteName != null) {
         await DatadogRum.instance.stopView(previousRouteName);
       }
     }
     if (route is PageRoute) {
-      var routeName = route.settings.name;
+      final routeName = route.settings.name;
       if (routeName != null) {
         await DatadogRum.instance.startView(routeName);
       }
