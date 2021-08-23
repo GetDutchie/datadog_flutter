@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.2.1
+
+* Add environment configuration on Android (#42)
+
 ## 1.2.0
 
 * Fixes a null-safe exception at the Android level when using DatadogTracing.
