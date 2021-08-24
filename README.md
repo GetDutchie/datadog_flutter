@@ -13,6 +13,7 @@ Community implementation of native bindings for Datadog's SDK. **This is not an 
       clientToken: myDatadogClientToken,
       serviceName: 'my-app-name',
       environment: 'production',
+      trackingConsent: TrackingConsent.granted,
     )
     ```
 2. Associate RUM and log events (optional):
@@ -55,6 +56,7 @@ RUM adds support for error, event, and screen tracking. The integration requires
       environment: 'production',
       iosRumApplicationId: myiOSRumApplicationId,
       androidRumApplicationId: myAndroidRumApplicationId,
+      trackingConsent: TrackingConsent.granted,
     )
     ```
 1. Acknowledge `TrackingConsent` at initialization or later within your application. **Events will not be logged until `trackingConsent` is `.granted`**. This value can be updated via `DatadogFlutter.updateTrackingConsent`.
