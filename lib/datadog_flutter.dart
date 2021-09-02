@@ -23,6 +23,7 @@ class DatadogFlutter {
     String flavorName = '',
     String? iosRumApplicationId,
     bool useEUEndpoints = false,
+    String? webRumApplicationId,
   }) async {
     await channel.invokeMethod('initWithClientToken', {
       'androidRumApplicationId': androidRumApplicationId,
@@ -33,6 +34,7 @@ class DatadogFlutter {
       'serviceName': serviceName,
       'trackingConsent': trackingConsent.index,
       'useEUEndpoints': useEUEndpoints,
+      'webRumApplicationId': webRumApplicationId,
     });
   }
 

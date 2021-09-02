@@ -13,6 +13,9 @@ dependencies:
   http: ^0.13.0
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  js: ^0.6.3
 
 dev_dependencies:
   flutter_test:
@@ -32,3 +35,6 @@ flutter:
         pluginClass: DatadogFlutterPlugin
       ios:
         pluginClass: DatadogFlutterPlugin
+      web:
+        pluginClass: DatadogFlutterPlugin
+        fileName: datadog_web.dart
