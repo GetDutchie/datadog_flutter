@@ -24,6 +24,7 @@ class DatadogLogger {
     if (bindOnRecord) Logger.root.onRecord.listen(onRecordCallback);
   }
 
+  /// Adds an attribute to all future messages from this logger.
   Future<void> addAttribute(String attributeName, String value) async {
     return await channel.invokeMethod('loggerAddAttribute', {
       'identifier': hashCode.toString(),
@@ -32,6 +33,9 @@ class DatadogLogger {
     });
   }
 
+  /// Adds a tag to all future messages from this logger.
+  ///
+  /// This is not invoked and resolves silently when using Flutter web.
   Future<void> addTag(String tagName, String value) async {
     return await channel.invokeMethod('loggerAddTag', {
       'identifier': hashCode.toString(),
@@ -48,6 +52,7 @@ class DatadogLogger {
         attributes: {'loggerName': record.loggerName},
       );
 
+  /// Removes a previously-added attribute from all future messages from this logger.
   Future<void> removeAttribute(String attributeName) async {
     return await channel.invokeMethod('loggerRemoveAttribute', {
       'identifier': hashCode.toString(),
@@ -55,6 +60,9 @@ class DatadogLogger {
     });
   }
 
+  /// Removes a previously-added tag from all future messages from this logger.
+  ///
+  /// This is not invoked and resolves silently when using Flutter web.
   Future<void> removeTag(String tagName) async {
     return await channel.invokeMethod('loggerRemoveTag', {
       'identifier': hashCode.toString(),

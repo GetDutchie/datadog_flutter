@@ -59,6 +59,8 @@ class DatadogFlutter {
   /// and it is changed to `.granted`, the SDK will send all current and
   /// future data to Datadog; if changed to `.notGranted`, the SDK will
   /// wipe all current data and will not collect any future data.
+  ///
+  /// This is not invoked and resolves silently when using Flutter web.
   static Future<void> updateTrackingConsent(
     TrackingConsent trackingConsent,
   ) async {

@@ -56,6 +56,8 @@ class DatadogRum {
   }
 
   /// Manually track a user event.
+  ///
+  /// [action] is ignored when using Flutter web.
   Future<void> addUserAction(
     String name, {
     RUMAction action = RUMAction.tap,
@@ -81,6 +83,8 @@ class DatadogRum {
   /// should be used by [stopLoading] when ready.
   ///
   /// [method] should be an uppercase HTTP method.
+  ///
+  /// This is not invoked and resolves silently when using Flutter web.
   static Future<void> startResourceLoading(
     String key, {
     required String url,
@@ -105,6 +109,8 @@ class DatadogRum {
   /// This is used to track long running user actions (e.g. "scroll").
   /// Such an User Action must be stopped with [stopUserAction], and
   /// will be stopped automatically if it lasts for more than 10 seconds.
+  ///
+  /// This is not invoked and resolves silently when using Flutter web.
   Future<void> startUserAction(
     String name, {
     RUMAction action = RUMAction.tap,
@@ -126,6 +132,8 @@ class DatadogRum {
   ///
   /// [attributes] will not be reported if [errorMessage] is present
   /// on Android.
+  ///
+  /// This is not invoked and resolves silently when using Flutter web.
   static Future<void> stopResourceLoading(
     String key, {
     int? statusCode,
@@ -146,6 +154,8 @@ class DatadogRum {
   ///
   /// This is used to stop tracking long running user actions (e.g. "scroll"),
   /// started with [startUserAction].
+  ///
+  /// This is not invoked and resolves silently when using Flutter web.
   Future<void> stopUserAction(
     String name, {
     RUMAction action = RUMAction.tap,
@@ -157,6 +167,8 @@ class DatadogRum {
   }
 
   /// Manually track exit from a screen. See [DatadogObserver].
+  ///
+  /// This is not invoked and resolves silently when using Flutter web.
   Future<void> stopView(String screenName) async {
     return await channel.invokeMethod('rumStopView', {'key': screenName});
   }
