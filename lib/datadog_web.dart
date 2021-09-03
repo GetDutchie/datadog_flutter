@@ -3,24 +3,12 @@ import 'dart:html' as html;
 
 import 'package:datadog_flutter/src/interop/dd_log.dart' as dd_logs;
 import 'package:datadog_flutter/src/interop/dd_rum.dart' as dd_rum;
+
 import 'package:flutter/services.dart';
 import 'package:datadog_flutter/src/channel.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 class DatadogFlutterPlugin {
-  static final LOGGER_SCRIPT =
-      _generateScript('https://www.datadoghq-browser-agent.com/datadog-logs-v3.js', 'DD_LOGS');
-  static final RUM_SCRIPT =
-      _generateScript('https://www.datadoghq-browser-agent.com/datadog-rum-v3.js', 'DD_RUM');
-
-  static String _generateScript(String jsURL, String windowProperty) => '''
-    (function(h,o,u,n,d) {
-    h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
-    d=o.createElement(u);d.async=1;d.src=n
-    n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
-  })(window,document,'script','$jsURL','$windowProperty')
-  ''';
-
   static void registerWith(Registrar registrar) {
     final _channel = MethodChannel(
       channel.name,
@@ -29,6 +17,10 @@ class DatadogFlutterPlugin {
     );
     final instance = DatadogFlutterPlugin();
     _channel.setMethodCallHandler(instance.handleMethodCall);
+    html.document.addEventListener('ready', (event) {
+      _writeJavascriptToDOM(LOGGER_SCRIPT);
+      _writeJavascriptToDOM(RUM_SCRIPT);
+    });
   }
 
   final Map<String, dd_logs.Logger> loggers = {};
@@ -38,8 +30,6 @@ class DatadogFlutterPlugin {
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'initWithClientToken':
-        _writeJavascriptToDOM(LOGGER_SCRIPT);
-        _writeJavascriptToDOM(RUM_SCRIPT);
         dd_logs.onReady(() {
           dd_logs.init({
             'clientToken': call.arguments['clientToken'],
@@ -47,15 +37,15 @@ class DatadogFlutterPlugin {
             'service': call.arguments['service'],
             'site': call.arguments['useEUEndpoints'] ? 'datadoghq.eu' : 'datadoghq.com',
           });
-        });
-        dd_rum.onReady(() {
-          dd_rum.init({
-            'clientToken': call.arguments['clientToken'],
-            'env': call.arguments['environment'],
-            'service': call.arguments['service'],
-            'site': call.arguments['useEUEndpoints'] ? 'datadoghq.eu' : 'datadoghq.com',
-            'trackInteractions': true,
-            'applicationId': call.arguments['webRumApplicationId'],
+          dd_rum.onReady(() {
+            dd_rum.init({
+              'clientToken': call.arguments['clientToken'],
+              'env': call.arguments['environment'],
+              'service': call.arguments['service'],
+              'site': call.arguments['useEUEndpoints'] ? 'datadoghq.eu' : 'datadoghq.com',
+              'trackInteractions': true,
+              'applicationId': call.arguments['webRumApplicationId'],
+            });
           });
         });
         return true;
@@ -138,10 +128,24 @@ class DatadogFlutterPlugin {
     }
   }
 
-  void _writeJavascriptToDOM(String javascript) {
+  static final LOGGER_SCRIPT =
+      _generateScript('https://www.datadoghq-browser-agent.com/datadog-logs-v3.js', 'DD_LOGS');
+  static final RUM_SCRIPT =
+      _generateScript('https://www.datadoghq-browser-agent.com/datadog-rum-v3.js', 'DD_RUM');
+
+  static String _generateScript(String jsURL, String windowProperty) => '''
+    (function(h,o,u,n,d) {
+    h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
+    d=o.createElement(u);d.async=1;d.src=n
+    n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
+  })(window,document,'script','$jsURL','$windowProperty')
+  ''';
+
+  static void _writeJavascriptToDOM(String javascript) {
     final element = html.document.createElement('script');
     element.text = javascript;
     final scriptTag = html.document.getElementsByTagName('script').first;
+    html.window.console.log(scriptTag.parentNode);
     scriptTag.parentNode?.insertBefore(element, scriptTag);
   }
 }

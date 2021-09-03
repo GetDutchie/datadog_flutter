@@ -43,9 +43,9 @@ ddLogger.log('time to cook pizza', Level.FINE, attributes: {
 });
 ```
 
-### Web Caveats
+### Flutter Web Caveats
 
-Tags cannot be added to logs when using Flutter web. This is a missing feature in Datadog's JS SDK.
+* `addTag` and `removeTag` are not invoked and resolve silently when using Flutter web. This is a missing feature in Datadog's JS SDK.
 
 ## Real User Monitoring
 
@@ -59,6 +59,7 @@ RUM adds support for error, event, and screen tracking. The integration requires
       environment: 'production',
       iosRumApplicationId: myiOSRumApplicationId,
       androidRumApplicationId: myAndroidRumApplicationId,
+      webRumApplicationId: myWebRumApplicationId,
     )
     ```
 1. Acknowledge `TrackingConsent` at initialization or later within your application. **Events will not be logged until `trackingConsent` is `.granted`**. This value can be updated via `DatadogFlutter.updateTrackingConsent`.
@@ -114,8 +115,9 @@ RUM adds support for error, event, and screen tracking. The integration requires
     )
     ```
 
-### Web Caveats
+### Flutter Web Caveats
 
+* `addUserAction` ignores the `action` when using Flutter web.
 * `updateTrackingConsent` is not invoked and fails silently when using Flutter web. This is a missing feature in Datadog's JS SDK.
 * `stopView` is not invoked and fails silently when using Flutter web. This is a missing feature in Datadog's JS SDK.
 * `startUserAction` and `stopStopUserAction` are not invoked and fail silently when using Flutter web. This is a missing feature in Datadog's JS SDK.
