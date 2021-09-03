@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:html' as html;
 
 import 'package:datadog_flutter/src/web/datadog_web_logger.dart';
 import 'package:datadog_flutter/src/web/datadog_web_rum.dart';
@@ -25,13 +24,6 @@ class DatadogFlutterPlugin {
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'initWithClientToken':
-        html.document.addEventListener('ready', (event) {
-          _writeJavascriptToDOM(LOGGER_SCRIPT);
-          if (call.arguments['webRumApplicationId'] != null) {
-            _writeJavascriptToDOM(RUM_SCRIPT);
-          }
-        });
-
         logger.init(call);
         if (call.arguments['webRumApplicationId'] != null) {
           rum.init(call);
@@ -57,30 +49,5 @@ class DatadogFlutterPlugin {
           details: "The datadog_flutter plugin for web doesn't implement '${call.method}'",
         );
     }
-  }
-
-  static final LOGGER_SCRIPT =
-      _generateScript('https://www.datadoghq-browser-agent.com/datadog-logs-v3.js', 'DD_LOGS');
-  static final RUM_SCRIPT =
-      _generateScript('https://www.datadoghq-browser-agent.com/datadog-rum-v3.js', 'DD_RUM');
-
-  /// Creates script text to inject into the browser to import DD scripts.
-  /// See [_writeJavascriptToDOM].
-  static String _generateScript(String jsURL, String windowProperty) => '''
-    (function(h,o,u,n,d) {
-    h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
-    d=o.createElement(u);d.async=1;d.src=n
-    n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
-  })(window,document,'script','$jsURL','$windowProperty')
-  ''';
-
-  /// Append raw text in a script tag to the document's <head>
-  /// See [_generateScript],
-  static void _writeJavascriptToDOM(String javascript) {
-    final element = html.document.createElement('script');
-    element.text = javascript;
-    final scriptTag = html.document.getElementsByTagName('script').first;
-    html.window.console.log(scriptTag.parentNode);
-    scriptTag.parentNode?.insertBefore(element, scriptTag);
   }
 }
