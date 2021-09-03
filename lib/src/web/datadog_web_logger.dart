@@ -42,7 +42,7 @@ class DatadogWebLogger {
       case 'log':
         loggers[call.arguments['identifier']]?.log(
           call.arguments['message'],
-          jsify(call.arguments['attributes']),
+          jsify(call.arguments['attributes'] ?? {}),
           call.arguments['level'],
         );
         return true;

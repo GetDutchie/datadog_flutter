@@ -24,7 +24,7 @@ Community implementation of native bindings for Datadog's SDK. **This is not an 
 
 ### Flutter Web Caveats
 
-The Datadog scripts need to be inserted in your `index.html` document. Please add both the [logging script](https://docs.datadoghq.com/logs/log_collection/javascript/#cdn-async) and the [RUM script](https://docs.datadoghq.com/real_user_monitoring/browser/#cdn-async). **DO NOT** add the `.init` on `.onReady` code.
+The Datadog scripts need to be inserted in your `index.html` document. Please add both the [logging script](https://docs.datadoghq.com/logs/log_collection/javascript/#cdn-async) and the [RUM script](https://docs.datadoghq.com/real_user_monitoring/browser/#cdn-async) to [their own](example/web/index.html) `<script>` tags. **DO NOT** add the `.init` on `.onReady` code.
 
 ## Logging
 
