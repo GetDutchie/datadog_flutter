@@ -69,7 +69,8 @@ class MyApp extends StatelessWidget {
               child: Text('WARN Log to Datadog'),
             ),
             TextButton(
-              onPressed: () => DatadogRum.instance.addUserAction('Send Event Button'),
+              onPressed: () =>
+                  DatadogRum.instance.addUserAction('Send Event Button'),
               child: Text('Send Event To RUM'),
             ),
             TextButton(

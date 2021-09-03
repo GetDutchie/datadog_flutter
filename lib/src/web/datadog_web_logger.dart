@@ -22,20 +22,24 @@ class DatadogWebLogger {
   bool? handleMethodCall(MethodCall call) {
     switch (call.method) {
       case 'loggerCreateLogger':
-        final logger = dd_logs.createLogger(call.arguments['loggerName'], 'debug', 'http');
+        final logger =
+            dd_logs.createLogger(call.arguments['loggerName'], 'debug', 'http');
         loggers[call.arguments['identifier']] = logger;
         return true;
       case 'loggerAddAttribute':
         logAttributes[call.arguments['identifier']] ??= {};
         logAttributes[call.arguments['identifier']]?[call.arguments['key']] =
             call.arguments['value'];
-        dd_logs.setLoggerGlobalContext(logAttributes[call.arguments['identifier']] ?? {});
+        dd_logs.setLoggerGlobalContext(
+            logAttributes[call.arguments['identifier']] ?? {});
         return true;
       case 'loggerAddTag':
         return false;
       case 'loggerRemoveAttribute':
-        logAttributes[call.arguments['identifier']]?.remove(call.arguments['key']);
-        dd_logs.setLoggerGlobalContext(jsify(logAttributes[call.arguments['identifier']] ?? {}));
+        logAttributes[call.arguments['identifier']]
+            ?.remove(call.arguments['key']);
+        dd_logs.setLoggerGlobalContext(
+            jsify(logAttributes[call.arguments['identifier']] ?? {}));
         return true;
       case 'loggerRemoveTag':
         return false;

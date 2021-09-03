@@ -26,7 +26,8 @@ class DatadogWebRum {
         dd_rum.addTiming(call.arguments['name']);
         return false;
       case 'rumAddUserAction':
-        dd_rum.addAction(call.arguments['name'], jsify(call.arguments['attributes']));
+        dd_rum.addAction(
+            call.arguments['name'], jsify(call.arguments['attributes']));
         return true;
       case 'rumRemoveAttribute':
         rumAttributes.remove(call.arguments['key']);

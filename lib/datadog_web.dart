@@ -42,11 +42,13 @@ class DatadogFlutterPlugin {
         return false;
 
       default:
-        final result = logger.handleMethodCall(call) ?? rum.handleMethodCall(call);
+        final result =
+            logger.handleMethodCall(call) ?? rum.handleMethodCall(call);
         if (result != null) return result;
         throw PlatformException(
           code: 'Unimplemented',
-          details: "The datadog_flutter plugin for web doesn't implement '${call.method}'",
+          details:
+              "The datadog_flutter plugin for web doesn't implement '${call.method}'",
         );
     }
   }
