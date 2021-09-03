@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:html' as html;
 
-import 'package:datadog_flutter/src/interop/dd_log.dart' as dd_logs;
-import 'package:datadog_flutter/src/interop/dd_rum.dart' as dd_rum;
+import 'package:datadog_flutter/src/web/datadog_web_logger.dart';
+import 'package:datadog_flutter/src/web/datadog_web_rum.dart';
 
 import 'package:flutter/services.dart';
 import 'package:datadog_flutter/src/channel.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 class DatadogFlutterPlugin {
+  final logger = DatadogWebLogger();
+  final rum = DatadogWebRum();
+
   static void registerWith(Registrar registrar) {
     final _channel = MethodChannel(
       channel.name,
@@ -17,110 +20,38 @@ class DatadogFlutterPlugin {
     );
     final instance = DatadogFlutterPlugin();
     _channel.setMethodCallHandler(instance.handleMethodCall);
-    html.document.addEventListener('ready', (event) {
-      _writeJavascriptToDOM(LOGGER_SCRIPT);
-      _writeJavascriptToDOM(RUM_SCRIPT);
-    });
   }
-
-  final Map<String, dd_logs.Logger> loggers = {};
-  final Map<String, Map<String, dynamic>> logAttributes = {};
-  final Map<String, dynamic> rumAttributes = {};
 
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'initWithClientToken':
-        dd_logs.onReady(() {
-          dd_logs.init({
-            'clientToken': call.arguments['clientToken'],
-            'env': call.arguments['environment'],
-            'service': call.arguments['service'],
-            'site': call.arguments['useEUEndpoints'] ? 'datadoghq.eu' : 'datadoghq.com',
-          });
-          dd_rum.onReady(() {
-            dd_rum.init({
-              'clientToken': call.arguments['clientToken'],
-              'env': call.arguments['environment'],
-              'service': call.arguments['service'],
-              'site': call.arguments['useEUEndpoints'] ? 'datadoghq.eu' : 'datadoghq.com',
-              'trackInteractions': true,
-              'applicationId': call.arguments['webRumApplicationId'],
-            });
-          });
+        html.document.addEventListener('ready', (event) {
+          _writeJavascriptToDOM(LOGGER_SCRIPT);
+          if (call.arguments['webRumApplicationId'] != null) {
+            _writeJavascriptToDOM(RUM_SCRIPT);
+          }
         });
+
+        logger.init(call);
+        if (call.arguments['webRumApplicationId'] != null) {
+          rum.init(call);
+        }
+
         return true;
-      case 'loggerCreateLogger':
-        final logger = dd_logs.createLogger(call.arguments['loggerName'], 'debug', 'http');
-        loggers[call.arguments['identifier']] = logger;
-        return true;
-      case 'loggerAddAttribute':
-        logAttributes[call.arguments['identifier']] ??= {};
-        logAttributes[call.arguments['identifier']]?[call.arguments['key']] =
-            call.arguments['value'];
-        dd_logs.onReady(() {
-          dd_logs.setLoggerGlobalContext(logAttributes[call.arguments['identifier']] ?? {});
-        });
-        return true;
-      case 'loggerAddTag':
-        return false;
-      case 'loggerRemoveAttribute':
-        logAttributes[call.arguments['identifier']]?.remove(call.arguments['key']);
-        dd_logs.setLoggerGlobalContext(logAttributes[call.arguments['identifier']] ?? {});
-        return true;
-      case 'loggerRemoveTag':
-        return false;
-      case 'log':
-        loggers[call.arguments['identifier']]?.log(
-          call.arguments['message'],
-          call.arguments['attributes'],
-          call.arguments['level'],
-        );
-        return true;
-      case 'resourceStartLoading':
-      case 'resourceStopLoading':
-        return false;
-      case 'rumAddAttribute':
-        rumAttributes[call.arguments['key']] = call.arguments['value'];
-        dd_rum.setRumGlobalContext(rumAttributes);
-        return true;
-      case 'rumAddError':
-        dd_rum.addError(call.arguments['message']);
-        return true;
-      case 'rumAddTiming':
-        dd_rum.addTiming(call.arguments['name']);
-        return false;
-      case 'rumAddUserAction':
-        dd_rum.addAction(call.arguments['name'], call.arguments['attributes']);
-        return true;
-      case 'rumRemoveAttribute':
-        rumAttributes.remove(call.arguments['key']);
-        dd_rum.setRumGlobalContext(rumAttributes);
-        return false;
-      case 'rumStartView':
-        dd_rum.startView(call.arguments['key']);
-        return true;
-      case 'rumStartUserAction':
-      case 'rumStopUserAction':
-      case 'rumStopView':
-        return false;
-      case 'setUserInfo':
-        dd_rum.setUser({
-          'email': call.arguments['email'],
-          'id': call.arguments['id'],
-          'name': call.arguments['name'],
-          ...?call.arguments['extraInfo']
-        });
-        return true;
+      // tracing is handled natively on the browser
       case 'tracingCreateHeadersForRequest':
-        // this is handled natively on the browser
         return {};
+      case 'tracingInitialize':
+        return false;
       case 'tracingFinishSpan':
-        // this is handled natively on the browser
         return true;
+      // trackingConsent is handled by `site:` on the browser
       case 'updateTrackingConsent':
         return false;
 
       default:
+        final result = logger.handleMethodCall(call) ?? rum.handleMethodCall(call);
+        if (result != null) return result;
         throw PlatformException(
           code: 'Unimplemented',
           details: "The datadog_flutter plugin for web doesn't implement '${call.method}'",
@@ -133,6 +64,8 @@ class DatadogFlutterPlugin {
   static final RUM_SCRIPT =
       _generateScript('https://www.datadoghq-browser-agent.com/datadog-rum-v3.js', 'DD_RUM');
 
+  /// Creates script text to inject into the browser to import DD scripts.
+  /// See [_writeJavascriptToDOM].
   static String _generateScript(String jsURL, String windowProperty) => '''
     (function(h,o,u,n,d) {
     h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
@@ -141,6 +74,8 @@ class DatadogFlutterPlugin {
   })(window,document,'script','$jsURL','$windowProperty')
   ''';
 
+  /// Append raw text in a script tag to the document's <head>
+  /// See [_generateScript],
   static void _writeJavascriptToDOM(String javascript) {
     final element = html.document.createElement('script');
     element.text = javascript;
