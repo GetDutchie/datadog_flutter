@@ -5,28 +5,28 @@ import 'package:flutter/foundation.dart';
 import 'package:js/js.dart';
 
 @JS()
-external void setRumGlobalContext(dynamic values);
-
-@JS()
-external void startView(String name);
-
-@JS()
-external void init(DatadogOptions options);
-
-@JS()
-external void setUser(UserOptions options);
-
-@JS()
-external void onReady(VoidCallback callback);
-
-@JS()
 external void addAction(String name, [dynamic attributes]);
+
+@JS()
+external void addError(dynamic error, [dynamic attributes]);
 
 @JS()
 external void addTiming(String name);
 
 @JS()
-external void addError(dynamic error, [dynamic attributes]);
+external void init(DatadogOptions options);
+
+@JS()
+external void onReady(VoidCallback callback);
+
+@JS()
+external void setRumGlobalContext(dynamic values);
+
+@JS()
+external void setUser(UserOptions options);
+
+@JS()
+external void startView(String name);
 
 @JS()
 @anonymous
