@@ -22,6 +22,10 @@ Community implementation of native bindings for Datadog's SDK. **This is not an 
 
 :warning: Your Podfile must have `use_frameworks!` (Flutter includes this by default) and your minimum iOS target must be >= 11. This is a requirement [from the Datadog SDK](https://github.com/DataDog/dd-sdk-ios/blob/master/DatadogSDKObjc.podspec#L17).
 
+### Flutter Web Caveats
+
+The Datadog scripts need to be inserted in your `index.html` document. Please add both the [logging script](https://docs.datadoghq.com/logs/log_collection/javascript/#cdn-async) and the [RUM script](https://docs.datadoghq.com/real_user_monitoring/browser/#cdn-async) to [their own](example/web/index.html) `<script>` tags. **DO NOT** add the `.init` on `.onReady` code.
+
 ## Logging
 
 In its default implementation, log data will only be transmitted to Datadog through [`Logger`](https://pub.dev/packages/logging) records. `print` statements are not guaranteed to be captured.
@@ -43,6 +47,10 @@ ddLogger.log('time to cook pizza', Level.FINE, attributes: {
 });
 ```
 
+### Flutter Web Caveats
+
+* `addTag` and `removeTag` are not invoked and resolve silently when using Flutter web. This is a missing feature in Datadog's JS SDK.
+
 ## Real User Monitoring
 
 RUM adds support for error, event, and screen tracking. The integration requires additional configuration for each service.
@@ -55,6 +63,7 @@ RUM adds support for error, event, and screen tracking. The integration requires
       environment: 'production',
       iosRumApplicationId: myiOSRumApplicationId,
       androidRumApplicationId: myAndroidRumApplicationId,
+      webRumApplicationId: myWebRumApplicationId,
     )
     ```
 1. Acknowledge `TrackingConsent` at initialization or later within your application. **Events will not be logged until `trackingConsent` is `.granted`**. This value can be updated via `DatadogFlutter.updateTrackingConsent`.
@@ -109,6 +118,15 @@ RUM adds support for error, event, and screen tracking. The integration requires
       errorMessage: 'Internal Server Error' ,
     )
     ```
+
+### Flutter Web Caveats
+
+* `addUserAction` ignores the `action` when using Flutter web.
+* `updateTrackingConsent` is not invoked and fails silently when using Flutter web. This is a missing feature in Datadog's JS SDK.
+* `stopView` is not invoked and fails silently when using Flutter web. This is a missing feature in Datadog's JS SDK.
+* `startUserAction` and `stopStopUserAction` are not invoked and fail silently when using Flutter web. This is a missing feature in Datadog's JS SDK.
+* `startResourceLoading` and `stopResourceLoading` are not invoked and resolve silently when using Flutter web. This is a missing feature in Datadog's JS SDK.
+* `setUserInfo` does not support custom attributes when using Flutter web. This is due to Dart's method of strongly typing JS. Only `name`, `id`, and `email` are supported.
 
 ## Tracing
 

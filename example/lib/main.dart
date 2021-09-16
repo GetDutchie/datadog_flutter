@@ -17,8 +17,9 @@ void main() async {
   await DatadogFlutter.initialize(
     clientToken: DATADOG_CLIENT_TOKEN,
     environment: 'production',
-    androidRumApplicationId: 'YOUR_IOS_RUM_APPLICATION_ID',
+    androidRumApplicationId: 'YOUR_ANDROID_RUM_APPLICATION_ID',
     iosRumApplicationId: 'YOUR_IOS_RUM_APPLICATION_ID',
+    webRumApplicationId: 'YOUR_WEB_RUM_APPLICATION_ID',
     serviceName: 'my-cool-app',
     trackingConsent: TrackingConsent.granted,
   );
@@ -57,11 +58,26 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('My Flutter Homepage'),
         ),
-        body: Center(
-          child: TextButton(
-            onPressed: () => otherLogger.fine('hello datadog'),
-            child: Text('Log to Datadog'),
-          ),
+        body: ListView(
+          children: [
+            TextButton(
+              onPressed: () => otherLogger.fine('FINE log from Flutter'),
+              child: Text('FINE Log to Datadog'),
+            ),
+            TextButton(
+              onPressed: () => otherLogger.warning('WARN log from Flutter'),
+              child: Text('WARN Log to Datadog'),
+            ),
+            TextButton(
+              onPressed: () =>
+                  DatadogRum.instance.addUserAction('Send Event Button'),
+              child: Text('Send Event To RUM'),
+            ),
+            TextButton(
+              onPressed: () => throw StateError('State Error from Flutter'),
+              child: Text('Report Zoned Error To RUM'),
+            ),
+          ],
         ),
       ),
       navigatorObservers: [

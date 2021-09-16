@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.3.0
+
+* Add support for Flutter web.
+
 ## 1.2.1
 
 * Add environment configuration on Android (#42)
