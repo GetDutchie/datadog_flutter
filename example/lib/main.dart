@@ -6,18 +6,11 @@ import 'package:datadog_flutter/datadog_tracing.dart';
 import 'package:flutter/material.dart';
 
 import 'package:datadog_flutter/datadog_flutter.dart';
+
+import 'config.dart';
 import 'rum.dart';
 import 'logs.dart';
 import 'tracing.dart';
-
-// DO NOT COMMIT TO GIT
-// Ideally, your token is encrypted if it must be committed or its added at build
-const DATADOG_CLIENT_TOKEN = 'YOUR_DATADOG_CLIENT_TOKEN';
-const ANDROID_RUM_APPLICATION_ID = 'YOUR_ANDROID_RUM_APPLICATION_ID';
-const IOS_RUM_APPLICATION_ID = 'YOUR_IOS_RUM_APPLICATION_ID';
-const WEB_RUM_APPLICATION_ID = 'YOUR_WEB_RUM_APPLICATION_ID';
-const ENVIRONMENT = 'demo';
-const SERVICE_NAME = 'my-example-app';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
