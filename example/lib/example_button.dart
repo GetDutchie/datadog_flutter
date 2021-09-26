@@ -15,7 +15,10 @@ class ExampleButton extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: ElevatedButton(
         onPressed: onPressed,
-        child: Text(text),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Text(text),
+        ),
       ),
     );
   }

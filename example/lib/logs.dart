@@ -20,7 +20,14 @@ class Logs extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        TextFormField(controller: controller),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(labelText: 'Log Text'),
+            autofocus: true,
+          ),
+        ),
         ExampleButton(
           onPressed: () => internalLoggger.finest('FINEST ${controller.text}'),
           text: 'FINEST',
@@ -66,7 +73,7 @@ class Logs extends StatelessWidget {
               'customBool': true,
             },
           ),
-          text: 'SHOUT',
+          text: 'Custom Attributes',
         ),
       ],
     );

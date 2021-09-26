@@ -21,10 +21,17 @@ class Rum extends StatelessWidget {
             );
             Navigator.of(context).push(route);
           },
-          text: 'Tap Event',
+          text: 'Change Route',
         ),
         Divider(),
-        TextFormField(controller: controller),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(labelText: 'Event Text'),
+            autofocus: true,
+          ),
+        ),
         ExampleButton(
           onPressed: () =>
               DatadogRum.instance.addUserAction('TAP ${controller.text}'),
@@ -63,6 +70,16 @@ class Rum extends StatelessWidget {
           onPressed: () => throw StateError('State Error from Flutter'),
           text: 'Report Zoned Error To RUM',
         ),
+        ExampleButton(
+          onPressed: () async {
+            try {
+              throw StateError('Custom Add Error from Flutter');
+            } catch (e, st) {
+              await DatadogRum.instance.addError(e, st);
+            }
+          },
+          text: 'Add Error To RUM',
+        ),
         Divider(),
         ExampleButton(
           onPressed: () => DatadogRum.instance.addUserAction(
@@ -86,10 +103,12 @@ class _ModalRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ExampleButton(
-        onPressed: Navigator.of(context).pop,
-        text: 'Go Back',
+    return Scaffold(
+      body: Container(
+        child: ExampleButton(
+          onPressed: Navigator.of(context).pop,
+          text: 'Go Back',
+        ),
       ),
     );
   }
