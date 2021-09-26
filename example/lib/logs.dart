@@ -28,6 +28,9 @@ class Logs extends StatelessWidget {
             autofocus: true,
           ),
         ),
+        // This could be refactored to a map using internalLogger.log
+        // however, the purpose of an example is to be illustrative so
+        // this should remain verbose
         ExampleButton(
           onPressed: () => internalLoggger.finest('FINEST ${controller.text}'),
           text: 'FINEST',
