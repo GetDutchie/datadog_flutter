@@ -67,7 +67,6 @@ RUM adds support for error, event, and screen tracking. The integration requires
       webRumApplicationId: myWebRumApplicationId,
     )
     ```
-1. Acknowledge `TrackingConsent` at initialization or later within your application. **Events will not be logged until `trackingConsent` is `.granted`**. This value can be updated via `DatadogFlutter.updateTrackingConsent`.
 1. Automatically track screens:
     ```dart
     MaterialApp(
