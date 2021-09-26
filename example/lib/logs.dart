@@ -41,7 +41,8 @@ class Logs extends StatelessWidget {
           child: Text('INFO'),
         ),
         MaterialButton(
-          onPressed: () => internalLoggger.warning('WARNING ${controller.text}'),
+          onPressed: () =>
+              internalLoggger.warning('WARNING ${controller.text}'),
           child: Text('WARNING'),
         ),
         MaterialButton(

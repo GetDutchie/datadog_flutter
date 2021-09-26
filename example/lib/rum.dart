@@ -24,7 +24,8 @@ class Rum extends StatelessWidget {
         Divider(),
         TextFormField(controller: controller),
         MaterialButton(
-          onPressed: () => DatadogRum.instance.addUserAction('TAP ${controller.text}'),
+          onPressed: () =>
+              DatadogRum.instance.addUserAction('TAP ${controller.text}'),
           child: Text('Tap Event'),
         ),
         MaterialButton(
