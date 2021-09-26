@@ -1,6 +1,8 @@
 import 'package:datadog_flutter/datadog_rum.dart';
 import 'package:flutter/material.dart';
 
+import 'example_button.dart';
+
 class Rum extends StatelessWidget {
   static final controller = TextEditingController(text: 'Event from Flutter');
 
@@ -10,7 +12,7 @@ class Rum extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        MaterialButton(
+        ExampleButton(
           onPressed: () {
             final route = MaterialPageRoute(
               fullscreenDialog: true,
@@ -19,50 +21,50 @@ class Rum extends StatelessWidget {
             );
             Navigator.of(context).push(route);
           },
-          child: Text('Tap Event'),
+          text: 'Tap Event',
         ),
         Divider(),
         TextFormField(controller: controller),
-        MaterialButton(
+        ExampleButton(
           onPressed: () =>
               DatadogRum.instance.addUserAction('TAP ${controller.text}'),
-          child: Text('Tap Event'),
+          text: 'Tap Event',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => DatadogRum.instance.addUserAction(
             'Scroll ${controller.text}',
             action: RUMAction.scroll,
           ),
-          child: Text('Scroll Event'),
+          text: 'Scroll Event',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => DatadogRum.instance.addUserAction(
             'SWIPE ${controller.text}',
             action: RUMAction.swipe,
           ),
-          child: Text('Swipe Event'),
+          text: 'Swipe Event',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => DatadogRum.instance.addUserAction(
             'CLICK ${controller.text}',
             action: RUMAction.click,
           ),
-          child: Text('Click Event'),
+          text: 'Click Event',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => DatadogRum.instance.addUserAction(
             'CUSTOM ${controller.text}',
             action: RUMAction.custom,
           ),
-          child: Text('Custom Event'),
+          text: 'Custom Event',
         ),
         Divider(),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => throw StateError('State Error from Flutter'),
-          child: Text('Report Zoned Error To RUM'),
+          text: 'Report Zoned Error To RUM',
         ),
         Divider(),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => DatadogRum.instance.addUserAction(
             'Custom Attributes',
             attributes: {
@@ -72,7 +74,7 @@ class Rum extends StatelessWidget {
               'customBool': true,
             },
           ),
-          child: Text('Custom Attributes'),
+          text: 'Custom Attributes',
         ),
       ],
     );
@@ -85,9 +87,9 @@ class _ModalRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: MaterialButton(
+      child: ExampleButton(
         onPressed: Navigator.of(context).pop,
-        child: Text('Go Back'),
+        text: 'Go Back',
       ),
     );
   }

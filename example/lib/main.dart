@@ -64,12 +64,15 @@ class MyApp extends StatelessWidget {
               ],
             ),
           ),
-          body: TabBarView(
-            children: [
-              Logs(),
-              Rum(),
-              Tracing(),
-            ],
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: TabBarView(
+              children: [
+                Logs(),
+                Rum(),
+                Tracing(),
+              ],
+            ),
           ),
         ),
       ),

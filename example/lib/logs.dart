@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:datadog_flutter/datadog_logger.dart';
 import 'package:logging/logging.dart';
+import 'example_button.dart';
 
 class Logs extends StatelessWidget {
   static final controller = TextEditingController(text: 'Hello  from Flutter');
@@ -20,41 +21,41 @@ class Logs extends StatelessWidget {
     return ListView(
       children: [
         TextFormField(controller: controller),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => internalLoggger.finest('FINEST ${controller.text}'),
-          child: Text('FINEST'),
+          text: 'FINEST',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => internalLoggger.finer('FINER ${controller.text}'),
-          child: Text('FINER'),
+          text: 'FINER',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => internalLoggger.fine('FINE ${controller.text}'),
-          child: Text('FINE'),
+          text: 'FINE',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => internalLoggger.config('CONFIG ${controller.text}'),
-          child: Text('CONFIG'),
+          text: 'CONFIG',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => internalLoggger.info('INFO ${controller.text}'),
-          child: Text('INFO'),
+          text: 'INFO',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () =>
               internalLoggger.warning('WARNING ${controller.text}'),
-          child: Text('WARNING'),
+          text: 'WARNING',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => internalLoggger.severe('SEVERE ${controller.text}'),
-          child: Text('SEVERE'),
+          text: 'SEVERE',
         ),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => internalLoggger.severe('SHOUT ${controller.text}'),
-          child: Text('SHOUT'),
+          text: 'SHOUT',
         ),
         Divider(),
-        MaterialButton(
+        ExampleButton(
           onPressed: () => ddLogger.log(
             'Custom Attributes',
             Level.WARNING,
@@ -65,7 +66,7 @@ class Logs extends StatelessWidget {
               'customBool': true,
             },
           ),
-          child: Text('SHOUT'),
+          text: 'SHOUT',
         ),
       ],
     );
