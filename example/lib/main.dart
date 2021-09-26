@@ -25,7 +25,7 @@ void main() async {
   await DatadogFlutter.initialize(
     androidRumApplicationId: ANDROID_RUM_APPLICATION_ID,
     clientToken: DATADOG_CLIENT_TOKEN,
-    environment: DEMO,
+    environment: ENVIRONMENT,
     iosRumApplicationId: IOS_RUM_APPLICATION_ID,
     serviceName: SERVICE_NAME,
     trackingConsent: TrackingConsent.granted,
