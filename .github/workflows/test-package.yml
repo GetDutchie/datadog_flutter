@@ -3,9 +3,9 @@ name: Test and Analyze
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   PUB_ENVIRONMENT: bot.github
@@ -18,14 +18,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sdk: [dev]
+        channel: [dev, stable]
     steps:
       - uses: actions/checkout@v2
-      - uses: dart-lang/setup-dart@v0.3
+      - name: Cache Flutter and Pub Dependencies
+        uses: actions/cache@v2
         with:
-          sdk: ${{ matrix.sdk }}
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ matrix.os }}-flutter-cache-${{ matrix.channel }}-${{ hashFiles('pubspec.yaml') }}
       - name: Install Flutter
-        uses: subosito/flutter-action@v1.4.0
+        uses: subosito/flutter-action@14cf1a3f117efa3893f2de5442aad22d32295efc
+        with:
+          channel: ${{ matrix.channel }}
       - id: install
         name: Install dependencies
         run: flutter pub get
@@ -46,14 +50,18 @@ jobs:
       matrix:
         # Add macos-latest and/or windows-latest if relevant for this package.
         os: [ubuntu-latest]
-        sdk: [dev]
+        channel: [dev, stable]
     steps:
       - uses: actions/checkout@v2
-      - uses: dart-lang/setup-dart@v0.3
+      - name: Cache Flutter and Pub Dependencies
+        uses: actions/cache@v2
         with:
-          sdk: ${{ matrix.sdk }}
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ matrix.os }}-flutter-cache-${{ matrix.channel }}-${{ hashFiles('pubspec.yaml') }}
       - name: Install Flutter
-        uses: subosito/flutter-action@v1.4.0
+        uses: subosito/flutter-action@14cf1a3f117efa3893f2de5442aad22d32295efc
+        with:
+          channel: ${{ matrix.channel }}
       - id: install
         name: Install dependencies
         run: flutter pub get
