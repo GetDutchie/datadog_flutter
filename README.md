@@ -92,7 +92,7 @@ RUM adds support for error, event, and screen tracking. The integration requires
       });
     }
     ```
-1. Manually track additional events:
+1. Manually track additional events (please note that [Android will only report `RUMAction.custom` events](https://github.com/GetDutchie/datadog_flutter/issues/53#issuecomment-923769393)):
     ```dart
     GestureDetector(onTap: () {
       DatadogRum.instance.addUserAction('EventTapped');
