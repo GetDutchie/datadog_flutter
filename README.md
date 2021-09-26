@@ -6,7 +6,7 @@ Community implementation of native bindings for Datadog's SDK. **This is not an 
 
 ## Setup
 
-1. Generate a client token from Datadog through [the Settings > API  panel](https://app.datadoghq.com/account/settings#api) (under Client Tokens).
+1. Generate a [client token](https://docs.datadoghq.com/account_management/api-app-keys/#client-tokens) from Datadog through [the Settings > API  panel](https://app.datadoghq.com/account/settings#api) (under Client Tokens). If you're using RUM, do not toggle between the RUM platform client tokens.
 1. Initialize:
     ```dart
     await DatadogFlutter.initialize(
@@ -15,10 +15,11 @@ Community implementation of native bindings for Datadog's SDK. **This is not an 
       environment: 'production',
     )
     ```
-2. Associate RUM and log events (optional):
+1. Associate RUM and log events (optional):
     ```dart
     await DatadogFlutter.setUserInfo(id: <YOUR_USER_ID>);
     ```
+1. [Acknowledge `TrackingConsent`](https://docs.datadoghq.com/logs/log_collection/ios/?tab=cocoapods#setup) at initialization or later within your application. **Events will not be logged until `trackingConsent` is `.granted`**. This value can be updated via `DatadogFlutter.updateTrackingConsent`.
 
 :warning: Your Podfile must have `use_frameworks!` (Flutter includes this by default) and your minimum iOS target must be >= 11. This is a requirement [from the Datadog SDK](https://github.com/DataDog/dd-sdk-ios/blob/master/DatadogSDKObjc.podspec#L17).
 
