@@ -2,10 +2,11 @@ import 'package:datadog_flutter/datadog_tracing.dart';
 import 'package:flutter/material.dart';
 
 import 'example_button.dart';
+import 'config.dart';
 
 class Tracing extends StatelessWidget {
   static final client = DatadogTracingHttpClient();
-  static final API_ROOT = Uri.parse('https://google.com');
+  static final ENDPOINT = Uri.parse(API_ROOT);
 
   const Tracing({Key? key}) : super(key: key);
 
@@ -14,23 +15,23 @@ class Tracing extends StatelessWidget {
     return ListView(
       children: [
         ExampleButton(
-          onPressed: () => client.get(API_ROOT),
+          onPressed: () => client.get(ENDPOINT),
           text: 'GET',
         ),
         ExampleButton(
-          onPressed: () => client.put(API_ROOT),
+          onPressed: () => client.put(ENDPOINT),
           text: 'PUT',
         ),
         ExampleButton(
-          onPressed: () => client.post(API_ROOT),
+          onPressed: () => client.post(ENDPOINT),
           text: 'POST',
         ),
         ExampleButton(
-          onPressed: () => client.patch(API_ROOT),
+          onPressed: () => client.patch(ENDPOINT),
           text: 'PATCH',
         ),
         ExampleButton(
-          onPressed: () => client.delete(API_ROOT),
+          onPressed: () => client.delete(ENDPOINT),
           text: 'DELETE',
         ),
       ],
