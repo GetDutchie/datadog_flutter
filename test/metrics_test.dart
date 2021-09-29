@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:datadog_flutter/metrics.dart';
 
-final elapsedTime = 1000;
+const elapsedTime = 1000;
 
 class MockStopwatch extends Mock implements Stopwatch {
   // While `when(elapsedMilliseconds).then` is the proper way
@@ -76,8 +76,7 @@ void main() {
         expect(map['points'], hasLength(2));
         expect(map['points'][0][0], equals(map['points'][0][1]));
         expect(map['points'][1][0], equals(map['points'][1][1]));
-        expect(map['points'][0][1] + elapsedTime,
-            greaterThanOrEqualTo(map['points'][1][1]));
+        expect(map['points'][0][1] + elapsedTime, greaterThanOrEqualTo(map['points'][1][1]));
       });
 
       test('with default tags', () {
