@@ -76,6 +76,28 @@ class Rum extends StatelessWidget {
             ),
             text: 'Custom Attributes',
           ),
+          const Divider(),
+          ExampleButton(
+            onPressed: () => DatadogRum.instance.startResourceLoading(
+              '${controller.text}1',
+              url: controller.text,
+            ),
+            text: 'Start Resource Loading',
+          ),
+          ExampleButton(
+            onPressed: () => DatadogRum.instance.stopResourceLoading(
+              '${controller.text}1',
+            ),
+            text: 'Stop Resource Loading',
+          ),
+          ExampleButton(
+            onPressed: () => DatadogRum.instance.startUserAction('${controller.text}1'),
+            text: 'Start User Action',
+          ),
+          ExampleButton(
+            onPressed: () => DatadogRum.instance.stopUserAction('${controller.text}1'),
+            text: 'Stop User Action',
+          ),
         ],
       ),
     );

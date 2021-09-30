@@ -7,7 +7,7 @@ class Logs extends StatelessWidget {
   static final controller = TextEditingController(text: 'Hello from Flutter');
 
   // Instantiation will bind to root Logger
-  static final ddLogger = DatadogLogger();
+  static final ddLogger = DatadogLogger(bindOnRecord: false);
 
   /// This can be instantiated anywhere. It can be regularly disposed and recreated
   /// (such as in a build method) becuase DatadogLogger was instantiated
@@ -72,6 +72,15 @@ class Logs extends StatelessWidget {
               },
             ),
             text: 'Custom Attributes',
+          ),
+          const Divider(),
+          ExampleButton(
+            onPressed: () => ddLogger.addTag('my-tag', 'true'),
+            text: 'Add Tag',
+          ),
+          ExampleButton(
+            onPressed: () => ddLogger.removeTag('my-tag'),
+            text: 'Remove Tag',
           ),
         ],
       ),
