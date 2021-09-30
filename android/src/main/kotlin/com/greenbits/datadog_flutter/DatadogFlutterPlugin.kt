@@ -108,6 +108,61 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         loggers[call.argument<String>("identifier")!!] = builder.build()
         result.success(true)
       }
+      call.method == "loggerLog" -> {
+        val logLevel = call.argument<String>("level")!!
+        val logMessage = call.argument<String>("message")!!
+        val attributes = call.argument<Map<String, Object>>("attributes") ?: HashMap<String, Object>();
+
+        when (logLevel) {
+          "debug" -> {
+            if (attributes != null) {
+              getLogger(call)?.v(logMessage, attributes = attributes)
+            } else {
+              getLogger(call)?.v(logMessage)
+            }
+          }
+          "info" -> {
+            if (attributes != null) {
+              getLogger(call)?.d(logMessage, attributes = attributes)
+            } else {
+              getLogger(call)?.d(logMessage)
+            }
+          }
+          "notice" -> {
+            if (attributes != null) {
+              getLogger(call)?.i(logMessage, attributes = attributes)
+            } else {
+              getLogger(call)?.i(logMessage)
+            }
+          }
+          "warn" -> {
+            if (attributes != null) {
+              getLogger(call)?.w(logMessage, attributes = attributes)
+            } else {
+              getLogger(call)?.w(logMessage)
+            }
+          }
+          "error" -> {
+            if (attributes != null) {
+              getLogger(call)?.e(logMessage, attributes = attributes)
+            } else {
+              getLogger(call)?.e(logMessage)
+            }
+          }
+          "critical" -> {
+            if (attributes != null) {
+              getLogger(call)?.wtf(logMessage, attributes = attributes)
+            } else {
+              getLogger(call)?.wtf(logMessage)
+            }
+          }
+          else -> {
+            result.error("UNKNOWN", "unknown log level $logLevel specified", null)
+          }
+        }
+
+        result.success(true)
+      }
       call.method == "loggerRemoveAttribute" -> {
         getLogger(call)?.removeAttribute(call.argument<String>("key")!!)
         result.success(true)
@@ -257,61 +312,6 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
       call.method == "updateTrackingConsent" -> {
         val consent = TrackingConsent.values()[call.argument<Int>("trackingConsent")!!]
         Datadog.setTrackingConsent(consent)
-        result.success(true)
-      }
-      call.method == "log" -> {
-        val logLevel = call.argument<String>("level")!!
-        val logMessage = call.argument<String>("message")!!
-        val attributes = call.argument<Map<String, Object>>("attributes") ?: HashMap<String, Object>();
-
-        when (logLevel) {
-          "debug" -> {
-            if (attributes != null) {
-              getLogger(call)?.v(logMessage, attributes = attributes)
-            } else {
-              getLogger(call)?.v(logMessage)
-            }
-          }
-          "info" -> {
-            if (attributes != null) {
-              getLogger(call)?.d(logMessage, attributes = attributes)
-            } else {
-              getLogger(call)?.d(logMessage)
-            }
-          }
-          "notice" -> {
-            if (attributes != null) {
-              getLogger(call)?.i(logMessage, attributes = attributes)
-            } else {
-              getLogger(call)?.i(logMessage)
-            }
-          }
-          "warn" -> {
-            if (attributes != null) {
-              getLogger(call)?.w(logMessage, attributes = attributes)
-            } else {
-              getLogger(call)?.w(logMessage)
-            }
-          }
-          "error" -> {
-            if (attributes != null) {
-              getLogger(call)?.e(logMessage, attributes = attributes)
-            } else {
-              getLogger(call)?.e(logMessage)
-            }
-          }
-          "critical" -> {
-            if (attributes != null) {
-              getLogger(call)?.wtf(logMessage, attributes = attributes)
-            } else {
-              getLogger(call)?.wtf(logMessage)
-            }
-          }
-          else -> {
-            result.error("UNKNOWN", "unknown log level $logLevel specified", null)
-          }
-        }
-
         result.success(true)
       }
       else -> result.notImplemented()

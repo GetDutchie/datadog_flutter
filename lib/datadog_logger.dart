@@ -44,6 +44,25 @@ class DatadogLogger {
     });
   }
 
+  /// Log message directly.
+  ///
+  /// If supplying [attributes], all attribute values will be converted to `Double`
+  /// in iOS. Stringified `"true"` and `"false"` are also recommended for
+  /// `bool` values as Flutter platform channels converts `bool`s to
+  /// NSNumber on iOS, making the attribute value inaccurate.
+  Future<void> log(
+    String logMessage,
+    Level logLevel, {
+    Map<String, dynamic>? attributes,
+  }) async {
+    return await channel.invokeMethod('loggerLog', {
+      'identifier': hashCode.toString(),
+      'level': _levelAsStatus(logLevel),
+      'message': logMessage,
+      if (attributes != null) 'attributes': attributes,
+    });
+  }
+
   /// Useful shorthand to attch to the logger stream:
   /// `Logger.root.onRecord.listen(myDatadogLogger.onRecordCallback);`
   Future<void> onRecordCallback(LogRecord record) => log(
@@ -67,19 +86,6 @@ class DatadogLogger {
     return await channel.invokeMethod('loggerRemoveTag', {
       'identifier': hashCode.toString(),
       'key': tagName,
-    });
-  }
-
-  Future<void> log(
-    String logMessage,
-    Level logLevel, {
-    Map<String, dynamic>? attributes,
-  }) async {
-    return await channel.invokeMethod('log', {
-      'identifier': hashCode.toString(),
-      'level': _levelAsStatus(logLevel),
-      'message': logMessage,
-      if (attributes != null) 'attributes': attributes,
     });
   }
 
