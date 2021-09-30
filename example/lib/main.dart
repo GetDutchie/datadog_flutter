@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:datadog_flutter/datadog_logger.dart';
 import 'package:datadog_flutter/datadog_observer.dart';
 import 'package:datadog_flutter/datadog_rum.dart';
 import 'package:datadog_flutter/datadog_tracing.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 import 'package:datadog_flutter/datadog_flutter.dart';
 
@@ -27,6 +29,10 @@ void main() async {
   FlutterError.onError = DatadogRum.instance.addFlutterError;
 
   await DatadogTracing.initialize();
+
+  Logger.root.level = Level.FINEST;
+  final _logger = DatadogLogger(loggerName: 'Root Logger');
+  Logger.root.onRecord.listen(_logger.onRecordCallback);
 
   // Catch errors without crashing the app:
   runZonedGuarded(() {
