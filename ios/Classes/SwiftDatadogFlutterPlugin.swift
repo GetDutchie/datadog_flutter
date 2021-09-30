@@ -338,6 +338,8 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         unencodedAttributes[key] = true
       } else if value as? String == "false" {
         unencodedAttributes[key] = false
+      } else if value is String {
+        unencodedAttributes[key] = value as? String
       }
     }
     return unencodedAttributes as? [AttributeKey : AttributeValue]
