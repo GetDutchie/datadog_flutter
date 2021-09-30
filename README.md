@@ -144,7 +144,7 @@ final httpClient = DatadogTracingHttpClient();
 final response = await httpClient.get('http://example.com');
 ```
 
-For frameworks that use an internal client like Brick or Dio, compose the client:
+For frameworks that use an internal client like Brick, compose the client:
 
 ```dart
 RestProvider(

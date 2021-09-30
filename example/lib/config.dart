@@ -11,3 +11,4 @@ const WEB_RUM_APPLICATION_ID = 'YOUR_WEB_RUM_APPLICATION_ID';
 const ENVIRONMENT = 'demo';
 const SERVICE_NAME = 'my-example-app';
 const API_ROOT = 'https://google.com';
+const HOST_NAME = '1234-ABCD';

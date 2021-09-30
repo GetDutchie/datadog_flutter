@@ -85,7 +85,7 @@ class DatadogRum {
   /// [method] should be an uppercase HTTP method.
   ///
   /// This is not invoked and resolves silently when using Flutter web.
-  static Future<void> startResourceLoading(
+  Future<void> startResourceLoading(
     String key, {
     required String url,
     String method = 'GET',
@@ -134,7 +134,7 @@ class DatadogRum {
   /// on Android.
   ///
   /// This is not invoked and resolves silently when using Flutter web.
-  static Future<void> stopResourceLoading(
+  Future<void> stopResourceLoading(
     String key, {
     int? statusCode,
     String? errorMessage,

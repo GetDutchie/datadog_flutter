@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'package:datadog_flutter/datadog_logger.dart';
 import 'package:datadog_flutter/datadog_observer.dart';
 import 'package:datadog_flutter/datadog_rum.dart';
-import 'package:datadog_flutter/datadog_logger.dart';
 import 'package:datadog_flutter/datadog_tracing.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 import 'package:datadog_flutter/datadog_flutter.dart';
 
@@ -22,25 +23,32 @@ void main() async {
     iosRumApplicationId: IOS_RUM_APPLICATION_ID,
     serviceName: SERVICE_NAME,
     trackingConsent: TrackingConsent.granted,
-    webRumApplicationId: WEB_RUM_APPLICATION_ID,
   );
+
+  await DatadogTracing.initialize();
+
+  // Set the HOST value
+  await DatadogFlutter.setUserInfo(id: HOST_NAME);
+  await DatadogRum.instance.addAttribute('hostname', HOST_NAME);
 
   // Capture Flutter errors automatically:
   FlutterError.onError = DatadogRum.instance.addFlutterError;
 
-  await DatadogTracing.initialize();
+  Logger.root.level = Level.FINEST;
+  final _logger = DatadogLogger(loggerName: 'Root Logger');
+  Logger.root.onRecord.listen(_logger.onRecordCallback);
 
   // Catch errors without crashing the app:
   runZonedGuarded(() {
-    runApp(MyApp());
+    runApp(const MyApp());
   }, (error, stackTrace) {
     DatadogRum.instance.addError(error, stackTrace);
   });
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,32 +58,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: DefaultTabController(
-        initialIndex: 0,
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Datadog Flutter Examples'),
-            bottom: TabBar(
-              tabs: [
-                Tab(text: 'Logs'),
-                Tab(text: 'RUM'),
-                Tab(text: 'Tracing'),
-              ],
-            ),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(20),
-            child: TabBarView(
-              children: [
-                Logs(),
-                Rum(),
-                Tracing(),
-              ],
-            ),
-          ),
-        ),
-      ),
+      routes: {
+        '/logs': (_) => const Logs(),
+        '/rum': (_) => const Rum(),
+        '/tracing': (_) => Tracing(),
+      },
+      home: const Logs(),
       navigatorObservers: [
         DatadogObserver(),
       ],

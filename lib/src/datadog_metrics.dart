@@ -155,7 +155,7 @@ class DatadogMetrics {
   /// This would reduce the number of outbound requests.
   /// [interval] defaults to 10 seconds
   void startQueue([Duration? interval]) {
-    interval ??= Duration(seconds: 10);
+    interval ??= const Duration(seconds: 10);
     stopQueue();
     _timer = Timer.periodic(interval, _sendQueuedMetrics);
   }

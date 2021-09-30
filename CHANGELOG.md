@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **BREAKING CHANGE**: `DatadogRum.startResourceLoading` and `DatadogRum.stopResourceLoading` are now accessed as `DatadogRum.instnace.startResourceLoading` and `DatadogRum.instance.stopResourceLoading`
+
 ## 1.3.0
 
 * Add support for Flutter web.

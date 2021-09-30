@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:datadog_flutter/metrics.dart';
 
-final elapsedTime = 1000;
+const elapsedTime = 1000;
 
 class MockStopwatch extends Mock implements Stopwatch {
   // While `when(elapsedMilliseconds).then` is the proper way
