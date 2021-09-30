@@ -27,16 +27,17 @@ void main() async {
 
   await DatadogTracing.initialize();
 
-  // Set the HOST value
-  await DatadogFlutter.setUserInfo(id: HOST_NAME);
-  await DatadogRum.instance.addAttribute('hostname', HOST_NAME);
-
   // Capture Flutter errors automatically:
   FlutterError.onError = DatadogRum.instance.addFlutterError;
 
   Logger.root.level = Level.FINEST;
   final _logger = DatadogLogger(loggerName: 'Root Logger');
   Logger.root.onRecord.listen(_logger.onRecordCallback);
+
+  // Set the HOST value
+  await DatadogFlutter.setUserInfo(id: HOST_NAME);
+  _logger.addAttribute('hostname', HOST_NAME);
+  await DatadogRum.instance.addAttribute('hostname', HOST_NAME);
 
   // Catch errors without crashing the app:
   runZonedGuarded(() {

@@ -14,10 +14,12 @@ jobs:
   # Check code formatting and static analysis on a single OS (linux)
   # against Dart dev.
   analyze:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        # Add macos-latest and/or windows-latest if relevant for this package.
+        os: [ubuntu-latest]
         channel: [dev, stable]
     steps:
       - uses: actions/checkout@v2

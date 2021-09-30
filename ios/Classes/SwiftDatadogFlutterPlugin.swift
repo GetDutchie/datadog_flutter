@@ -41,6 +41,29 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
 
         result(true)
 
+      case "loggerLog":
+        let logLevel = args!["level"] as! String
+        let logMessage = args!["message"] as! String
+        let attributes = encodeAttributes(args?["attributes"] as? [AttributeKey : Any])
+
+        switch logLevel {
+          case "debug":
+            getLogger(args)?.debug(logMessage, attributes: attributes)
+          case "info":
+            getLogger(args)?.info(logMessage, attributes: attributes)
+          case "notice":
+            getLogger(args)?.notice(logMessage, attributes: attributes)
+          case "warn":
+            getLogger(args)?.warn(logMessage, attributes: attributes)
+          case "error":
+            getLogger(args)?.error(logMessage, attributes: attributes)
+          case "critical":
+            getLogger(args)?.critical(logMessage, attributes: attributes)
+          default:
+            return result(false);
+        }
+        result(true);
+
       case "loggerAddAttribute":
         getLogger(args)?.addAttribute(
           forKey: args!["key"] as! String,
@@ -154,7 +177,7 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
 
       case "rumAddUserAction" :
         let type = numberToRumActionType(args?["type"] as? NSNumber)
-        let attributes = args?["attributes"] as? Dictionary<String, Encodable>
+        let attributes = encodeAttributes(args?["attributes"] as? [AttributeKey : Any])
         if attributes?.isEmpty ?? true {
           Global.rum.addUserAction(
             type: type,
@@ -175,7 +198,7 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
 
       case "rumStartUserAction":
         let type = numberToRumActionType(args?["type"] as? NSNumber)
-        let attributes = args?["attributes"] as? Dictionary<String, Encodable>
+        let attributes = encodeAttributes(args?["attributes"] as? [AttributeKey : Any])
         if attributes?.isEmpty ?? true {
           Global.rum.startUserAction(
             type: type,
@@ -196,7 +219,7 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
 
       case "rumStopUserAction":
         let type = numberToRumActionType(args?["type"] as? NSNumber)
-        let attributes = args?["attributes"] as? Dictionary<String, Encodable>
+        let attributes = encodeAttributes(args?["attributes"] as? [AttributeKey : Any])
         if attributes?.isEmpty ?? true {
           Global.rum.stopUserAction(
             type: type,
@@ -216,11 +239,12 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         result(true)
 
       case "setUserInfo":
+        let attributes = encodeAttributes(args?["attributes"] as? [AttributeKey : Any])
         Datadog.setUserInfo(
           id: args?["id"] as? String,
           name: args?["name"] as? String,
           email: args?["email"] as? String,
-          extraInfo: args?["attributes"] as? Dictionary<String, Encodable> ?? [AttributeKey : AttributeValue]()
+          extraInfo: attributes ?? [AttributeKey : AttributeValue]()
         )
         result(true)
 
@@ -264,28 +288,6 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         Datadog.set(trackingConsent: trackingConsent)
         result(true)
 
-      case "log":
-        let logLevel = args!["level"] as! String
-        let logMessage = args!["message"] as! String
-        let attributes = args?["attributes"] as? [String : Encodable]
-        switch logLevel {
-          case "debug":
-            getLogger(args)?.debug(logMessage, attributes: attributes)
-          case "info":
-            getLogger(args)?.info(logMessage, attributes: attributes)
-          case "notice":
-            getLogger(args)?.notice(logMessage, attributes: attributes)
-          case "warn":
-            getLogger(args)?.warn(logMessage, attributes: attributes)
-          case "error":
-            getLogger(args)?.error(logMessage, attributes: attributes)
-          case "critical":
-            getLogger(args)?.critical(logMessage, attributes: attributes)
-          default:
-            return result(false);
-        }
-        result(true);
-
       default:
         result(FlutterMethodNotImplemented);
     }
@@ -313,6 +315,36 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
     }
 
     return config
+  }
+
+  // Flutter sends ints, bools, and doubles as NSNumer
+  // but NSNumber does not conform to Encodable, so the number must
+  // be converted back to an Encodable format
+  private func encodeAttributes(_ attributes: [AttributeKey : Any]?) -> [AttributeKey : AttributeValue]? {
+    guard var unencodedAttributes = attributes else {
+      return nil
+    }
+    for key in unencodedAttributes.keys {
+      let value = unencodedAttributes[key]
+      if value is NSNumber {
+        // (decimals will be lost with Int so Double is used.
+        unencodedAttributes[key] = value as? Double
+
+      // Since bools are NSNumbers in platform channel, boolean
+      // attributes are 1 or 0; however, this could be intended as a
+      // number so documentation will encourage sending the boolean
+      // as a string and recasting from it
+      } else if value as? String == "true" {
+        unencodedAttributes[key] = true
+      } else if value as? String == "false" {
+        unencodedAttributes[key] = false
+      } else if value is String {
+        unencodedAttributes[key] = value as? String
+      } else if value is [String : Any] {
+        unencodedAttributes[key] = encodeAttributes(value as? [AttributeKey : Any])
+      }
+    }
+    return unencodedAttributes as? [AttributeKey : AttributeValue]
   }
 
   private func getLogger(_ args: [String : Any?]?) -> Logger? {
