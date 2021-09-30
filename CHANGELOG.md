@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.4.0
+
 * **BREAKING CHANGE**: `DatadogRum.startResourceLoading` and `DatadogRum.stopResourceLoading` are now accessed as `DatadogRum.instnace.startResourceLoading` and `DatadogRum.instance.stopResourceLoading`
 * Fix attributes in RUM and Logger for iOS. `NSNumber` (provided by [Flutter Platform Channels](https://flutter.dev/docs/development/platform-integration/platform-channels#codec)) is not `Encodable`
 * Change `log` in native platform method handler to `loggerLog`
