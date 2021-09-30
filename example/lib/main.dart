@@ -25,10 +25,14 @@ void main() async {
     trackingConsent: TrackingConsent.granted,
   );
 
+  await DatadogTracing.initialize();
+
+  // Set the HOST value
+  await DatadogFlutter.setUserInfo(id: HOST_NAME);
+  await DatadogRum.instance.addAttribute('hostname', HOST_NAME);
+
   // Capture Flutter errors automatically:
   FlutterError.onError = DatadogRum.instance.addFlutterError;
-
-  await DatadogTracing.initialize();
 
   Logger.root.level = Level.FINEST;
   final _logger = DatadogLogger(loggerName: 'Root Logger');
