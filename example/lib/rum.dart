@@ -17,7 +17,8 @@ class Rum extends StatelessWidget {
         shrinkWrap: true,
         children: [
           ExampleButton(
-            onPressed: () => DatadogRum.instance.addUserAction('TAP ${controller.text}'),
+            onPressed: () =>
+                DatadogRum.instance.addUserAction('TAP ${controller.text}'),
             text: 'Tap Event',
           ),
           ExampleButton(
@@ -91,11 +92,13 @@ class Rum extends StatelessWidget {
             text: 'Stop Resource Loading',
           ),
           ExampleButton(
-            onPressed: () => DatadogRum.instance.startUserAction('${controller.text}1'),
+            onPressed: () =>
+                DatadogRum.instance.startUserAction('${controller.text}1'),
             text: 'Start User Action',
           ),
           ExampleButton(
-            onPressed: () => DatadogRum.instance.stopUserAction('${controller.text}1'),
+            onPressed: () =>
+                DatadogRum.instance.stopUserAction('${controller.text}1'),
             text: 'Stop User Action',
           ),
         ],

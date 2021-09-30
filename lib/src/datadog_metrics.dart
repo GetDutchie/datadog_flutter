@@ -24,7 +24,8 @@ class DatadogMetrics {
   final String _endpoint;
 
   /// Datadog expects the time to be in seconds.
-  int get currentTime => (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
+  int get currentTime =>
+      (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
 
   Timer? _timer;
 
@@ -188,7 +189,8 @@ class DatadogMetrics {
         Uri.parse(_endpoint),
         headers: {'Content-type': 'application/json'},
         body: jsonEncode({
-          'series': metrics.map((m) => m.asMap).toList().cast<Map<String, dynamic>>(),
+          'series':
+              metrics.map((m) => m.asMap).toList().cast<Map<String, dynamic>>(),
         }),
       );
     } catch (e) {

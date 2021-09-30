@@ -28,7 +28,8 @@ class Logs extends StatelessWidget {
           // however, the purpose of an example is to be illustrative so
           // this should remain verbose
           ExampleButton(
-            onPressed: () => internalLoggger.finest('FINEST ${controller.text}'),
+            onPressed: () =>
+                internalLoggger.finest('FINEST ${controller.text}'),
             text: 'FINEST',
           ),
           ExampleButton(
@@ -40,7 +41,8 @@ class Logs extends StatelessWidget {
             text: 'FINE',
           ),
           ExampleButton(
-            onPressed: () => internalLoggger.config('CONFIG ${controller.text}'),
+            onPressed: () =>
+                internalLoggger.config('CONFIG ${controller.text}'),
             text: 'CONFIG',
           ),
           ExampleButton(
@@ -48,11 +50,13 @@ class Logs extends StatelessWidget {
             text: 'INFO',
           ),
           ExampleButton(
-            onPressed: () => internalLoggger.warning('WARNING ${controller.text}'),
+            onPressed: () =>
+                internalLoggger.warning('WARNING ${controller.text}'),
             text: 'WARNING',
           ),
           ExampleButton(
-            onPressed: () => internalLoggger.severe('SEVERE ${controller.text}'),
+            onPressed: () =>
+                internalLoggger.severe('SEVERE ${controller.text}'),
             text: 'SEVERE',
           ),
           ExampleButton(
