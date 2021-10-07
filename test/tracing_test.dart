@@ -1,9 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:datadog_flutter/datadog_tracing.dart';
 import 'package:datadog_flutter/src/channel.dart';
 
-@GenerateMocks([DatadogTracing])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final tester = TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger;
