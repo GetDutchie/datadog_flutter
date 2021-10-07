@@ -25,28 +25,23 @@ void main() {
 
   group("DatadogTracing", () {
     const spanId = "test-test";
-    group('#finishSpan', () {
-      test("tracing finished", () async {
-        await DatadogTracing.initialize();
-        final httpClient = DatadogTracingHttpClient();
-        final response =
-            await httpClient.get(Uri(path: 'http://greenbits.com'));
-        expect(
-            () => DatadogTracing.finishSpan(spanId,
-                statusCode: response.statusCode),
-            returnsNormally);
-      });
+    test("tracing finished", () async {
+      await DatadogTracing.initialize();
+      final httpClient = DatadogTracingHttpClient();
+      final response = await httpClient.get(Uri(path: 'http://greenbits.com'));
+      expect(
+          () => DatadogTracing.finishSpan(spanId,
+              statusCode: response.statusCode),
+          returnsNormally);
     });
 
-    group('#createHeaders', () {
-      test("create headers", () async {
-        expect(
-            () => DatadogTracing.createHeaders(
-                resourceName: "greenbits",
-                method: "get",
-                url: "http://greenbits.com"),
-            returnsNormally);
-      });
+    test("create headers", () async {
+      expect(
+          await DatadogTracing.createHeaders(
+              resourceName: "greenbits",
+              method: "get",
+              url: "http://greenbits.com"),
+          map);
     });
   });
 }
