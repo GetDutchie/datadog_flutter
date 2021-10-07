@@ -4,9 +4,14 @@ import 'package:datadog_flutter/src/channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final tester = TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger;
+  final tester =
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger;
 
-  final map = {"resourceName": "greenbits", "method": "get", "url": "http://greenbits.com"};
+  final map = {
+    "resourceName": "greenbits",
+    "method": "get",
+    "url": "http://greenbits.com"
+  };
 
   tester.setMockMethodCallHandler(channel, (methodCall) async {
     if (methodCall.method == 'tracingCreateHeadersForRequest') {
@@ -24,8 +29,11 @@ void main() {
       test("tracing finished", () async {
         await DatadogTracing.initialize();
         final httpClient = DatadogTracingHttpClient();
-        final response = await httpClient.get(Uri(path: 'http://greenbits.com'));
-        expect(() => DatadogTracing.finishSpan(spanId, statusCode: response.statusCode),
+        final response =
+            await httpClient.get(Uri(path: 'http://greenbits.com'));
+        expect(
+            () => DatadogTracing.finishSpan(spanId,
+                statusCode: response.statusCode),
             returnsNormally);
       });
     });
@@ -34,7 +42,9 @@ void main() {
       test("create headers", () async {
         expect(
             () => DatadogTracing.createHeaders(
-                resourceName: "greenbits", method: "get", url: "http://greenbits.com"),
+                resourceName: "greenbits",
+                method: "get",
+                url: "http://greenbits.com"),
             returnsNormally);
       });
     });
