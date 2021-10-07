@@ -9,9 +9,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final tester = TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger;
 
-  final Future<Map<String, String>> map = Future.value({
+  final map = {
     "resourceName": "greenbits", "method": "get", "url": "http://greenbits.com"
-  });
+  };
 
   tester.setMockMethodCallHandler(channel,
     (methodCall) async {
