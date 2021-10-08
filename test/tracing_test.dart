@@ -8,9 +8,9 @@ void main() {
       TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger;
 
   final map = {
-    "resourceName": "greenbits",
+    "resourceName": "http",
     "method": "get",
-    "url": "http://greenbits.com"
+    "url": "https://datadoghq.com"
   };
 
   tester.setMockMethodCallHandler(channel, (methodCall) async {
@@ -25,23 +25,25 @@ void main() {
 
   group("DatadogTracing", () {
     const spanId = "test-test";
-    test("tracing finished", () async {
+    test(".finishSpan", () async {
       await DatadogTracing.initialize();
       final httpClient = DatadogTracingHttpClient();
-      final response = await httpClient.get(Uri(path: 'http://greenbits.com'));
+      final response = await httpClient.get(Uri(path: 'https://datadoghq.com'));
       expect(
-          () => DatadogTracing.finishSpan(spanId,
-              statusCode: response.statusCode),
-          returnsNormally);
+        () =>
+            DatadogTracing.finishSpan(spanId, statusCode: response.statusCode),
+        returnsNormally,
+      );
     });
 
-    test("create headers", () async {
+    test(".createHeaders", () async {
       expect(
-          await DatadogTracing.createHeaders(
-              resourceName: "greenbits",
-              method: "get",
-              url: "http://greenbits.com"),
-          map);
+        await DatadogTracing.createHeaders(
+            resourceName: "greenbits",
+            method: "get",
+            url: "https://datadoghq.com"),
+        map,
+      );
     });
   });
 }
