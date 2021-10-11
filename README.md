@@ -141,7 +141,7 @@ For one-off requests, instantiate a fresh client:
 ```dart
 final httpClient = DatadogTracingHttpClient();
 // make requests
-final response = await httpClient.get('http://example.com');
+final response = await httpClient.get(Uri(string: 'http://example.com');
 ```
 
 For frameworks that use an internal client like Brick, compose the client:
