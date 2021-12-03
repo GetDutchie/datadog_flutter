@@ -3,9 +3,9 @@ name: Test and Analyze
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 env:
   PUB_ENVIRONMENT: bot.github
