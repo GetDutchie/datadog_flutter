@@ -43,7 +43,7 @@ class DatadogWebLogger {
         return true;
       case 'loggerRemoveTag':
         return false;
-      case 'log':
+      case 'loggerLog':
         loggers[call.arguments['identifier']]?.log(
           call.arguments['message'],
           jsify(call.arguments['attributes'] ?? {}),
