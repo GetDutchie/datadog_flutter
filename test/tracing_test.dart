@@ -4,13 +4,12 @@ import 'package:datadog_flutter/src/channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final tester =
-      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger;
+  final tester = TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger;
 
   final map = {
-    "resourceName": "http",
-    "method": "get",
-    "url": "https://datadoghq.com"
+    'resourceName': 'http',
+    'method': 'get',
+    'url': 'https://datadoghq.com',
   };
 
   tester.setMockMethodCallHandler(channel, (methodCall) async {
@@ -18,30 +17,28 @@ void main() {
       return map;
     }
 
-    if (methodCall.method == "tracingFinishSpan") {
+    if (methodCall.method == 'tracingFinishSpan') {
       return <String, String>{};
     }
+    return null;
   });
 
-  group("DatadogTracing", () {
-    const spanId = "test-test";
-    test(".finishSpan", () async {
+  group('DatadogTracing', () {
+    const spanId = 'test-test';
+    test('.finishSpan', () async {
       await DatadogTracing.initialize();
       final httpClient = DatadogTracingHttpClient();
       final response = await httpClient.get(Uri(path: 'https://datadoghq.com'));
       expect(
-        () =>
-            DatadogTracing.finishSpan(spanId, statusCode: response.statusCode),
+        () => DatadogTracing.finishSpan(spanId, statusCode: response.statusCode),
         returnsNormally,
       );
     });
 
-    test(".createHeaders", () async {
+    test('.createHeaders', () async {
       expect(
         await DatadogTracing.createHeaders(
-            resourceName: "greenbits",
-            method: "get",
-            url: "https://datadoghq.com"),
+            resourceName: 'greenbits', method: 'get', url: 'https://datadoghq.com'),
         map,
       );
     });
