@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 1.5.0-rc.1
+
+* Update Kotlin to [reflect requried minimum version](https://docs.flutter.dev/release/breaking-changes/kotlin-version) (#68)
+* Update Datadog Flutter Android to 1.11.1
+* Update Datadog Flutter iOS to 1.9.0
+
 ## 1.4.0
 
 * **BREAKING CHANGE**: `DatadogRum.startResourceLoading` and `DatadogRum.stopResourceLoading` are now accessed as `DatadogRum.instnace.startResourceLoading` and `DatadogRum.instance.stopResourceLoading`
