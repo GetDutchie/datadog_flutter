@@ -4,7 +4,8 @@ import 'package:datadog_flutter/src/channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final tester = TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger;
+  final tester =
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger;
 
   final map = {
     'resourceName': 'http',
@@ -30,7 +31,8 @@ void main() {
       final httpClient = DatadogTracingHttpClient();
       final response = await httpClient.get(Uri(path: 'https://datadoghq.com'));
       expect(
-        () => DatadogTracing.finishSpan(spanId, statusCode: response.statusCode),
+        () =>
+            DatadogTracing.finishSpan(spanId, statusCode: response.statusCode),
         returnsNormally,
       );
     });
@@ -38,7 +40,9 @@ void main() {
     test('.createHeaders', () async {
       expect(
         await DatadogTracing.createHeaders(
-            resourceName: 'greenbits', method: 'get', url: 'https://datadoghq.com'),
+            resourceName: 'greenbits',
+            method: 'get',
+            url: 'https://datadoghq.com'),
         map,
       );
     });
