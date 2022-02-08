@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Uppercases `kind` for `startResourceLoading` and `stopResourceLoading` on Android (#66)
+
 ## 1.4.0
 
 * **BREAKING CHANGE**: `DatadogRum.startResourceLoading` and `DatadogRum.stopResourceLoading` are now accessed as `DatadogRum.instnace.startResourceLoading` and `DatadogRum.instance.stopResourceLoading`
