@@ -197,7 +197,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
             key,
             call.argument<Int>("statusCode"),
             null,
-            RumResourceKind.valueOf(call.argument<String>("kind")!!),
+            RumResourceKind.valueOf(call.argument<String>("kind")!!.uppercase()),
             attributes ?: emptyMap<String, Any?>()
           )
         }

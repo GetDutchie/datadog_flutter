@@ -6,6 +6,10 @@
 * Update Datadog Flutter Android to 1.11.1
 * Update Datadog Flutter iOS to 1.9.0
 
+## 1.4.1
+
+* Uppercases `kind` for `startResourceLoading` and `stopResourceLoading` on Android (#66)
+
 ## 1.4.0
 
 * **BREAKING CHANGE**: `DatadogRum.startResourceLoading` and `DatadogRum.stopResourceLoading` are now accessed as `DatadogRum.instnace.startResourceLoading` and `DatadogRum.instance.stopResourceLoading`
