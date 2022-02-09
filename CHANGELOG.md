@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.5.0-rc.1
+## 1.5.0
 
 * Update Kotlin to [reflect requried minimum version](https://docs.flutter.dev/release/breaking-changes/kotlin-version) (#68)
 * Update Datadog Flutter Android to 1.11.1
