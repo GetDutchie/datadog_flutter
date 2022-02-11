@@ -1,9 +1,13 @@
 ## Unreleased
 
+## 1.5.2
+
+* Encode nested arrays and nested maps in iOS attributes (#62)
+
 ## 1.5.1
 
-* Rollback minimum Datadog Flutter Android to 1.8.1
-* Rollback minimum Datadog Flutter iOS to 1.5.0
+* Rollback minimum Datadog Flutter Android to 1.8.1 (#72)
+* Rollback minimum Datadog Flutter iOS to 1.5.0 (#72)
 
 ## 1.5.0
 

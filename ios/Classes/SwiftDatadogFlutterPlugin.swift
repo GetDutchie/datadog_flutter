@@ -317,32 +317,9 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
     return config
   }
 
-  // Flutter sends ints, bools, and doubles as NSNumer
-  // but NSNumber does not conform to Encodable, so the number must
-  // be converted back to an Encodable format
-  private func encodeAttributes(_ attributes: [AttributeKey : Any]?) -> [AttributeKey : AttributeValue]? {
+  private func encodeAttributes(_ attributes: Dictionary<String, Encodable>?) -> [AttributeKey : AttributeValue]? {
     guard var unencodedAttributes = attributes else {
       return nil
-    }
-    for key in unencodedAttributes.keys {
-      let value = unencodedAttributes[key]
-      if value is NSNumber {
-        // (decimals will be lost with Int so Double is used.
-        unencodedAttributes[key] = value as? Double
-
-      // Since bools are NSNumbers in platform channel, boolean
-      // attributes are 1 or 0; however, this could be intended as a
-      // number so documentation will encourage sending the boolean
-      // as a string and recasting from it
-      } else if value as? String == "true" {
-        unencodedAttributes[key] = true
-      } else if value as? String == "false" {
-        unencodedAttributes[key] = false
-      } else if value is String {
-        unencodedAttributes[key] = value as? String
-      } else if value is [String : Any] {
-        unencodedAttributes[key] = encodeAttributes(value as? [AttributeKey : Any])
-      }
     }
     return unencodedAttributes as? [AttributeKey : AttributeValue]
   }
