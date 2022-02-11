@@ -2,7 +2,8 @@
 
 ## 1.5.2
 
-* Encode nested arrays and nested maps in iOS attributes (#62)
+* Nested arrays and nested maps in attributes are supported on iOS (#62)
+* **BREAKING CHANGE** all attribute maps have been updated from `Map<String, dynamic>` to `Map<String, Object>`. These `Map`s no longer support nullable values.
 
 ## 1.5.1
 
