@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.5.1
+
+* Rollback minimum Datadog Flutter Android to 1.8.1
+* Rollback minimum Datadog Flutter iOS to 1.5.0
+
 ## 1.5.0
 
 * Update Kotlin to [reflect requried minimum version](https://docs.flutter.dev/release/breaking-changes/kotlin-version) (#68)
