@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:datadog_flutter/src/channel.dart';
 
@@ -58,12 +61,6 @@ class DatadogRum {
   /// Manually track a user event.
   ///
   /// [action] is ignored when using Flutter web.
-  ///
-  /// If supplying [attributes], all attribute values will be converted to `Double`
-  /// in iOS. Stringified `"true"` and `"false"` are also recommended for
-  /// `bool` values as Flutter platform channels converts `bool`s to
-  /// NSNumber on iOS, making the attribute value inaccurate. `Iterable`s are not
-  /// supported and nested `Map` support is limited.
   Future<void> addUserAction(
     String name, {
     RUMAction action = RUMAction.tap,
@@ -72,7 +69,7 @@ class DatadogRum {
     return await channel.invokeMethod('rumAddUserAction', {
       'name': name,
       'type': action.index,
-      'attributes': attributes,
+      'attributes': Platform.isIOS ? jsonEncode(attributes) : attributes,
     });
   }
 
@@ -90,12 +87,6 @@ class DatadogRum {
   ///
   /// [method] should be an uppercase HTTP method.
   ///
-  /// If supplying [attributes], all attribute values will be converted to `Double`
-  /// in iOS. Stringified `"true"` and `"false"` are also recommended for
-  /// `bool` values as Flutter platform channels converts `bool`s to
-  /// NSNumber on iOS, making the attribute value inaccurate. `Iterable`s are not
-  /// supported and nested `Map` support is limited.
-  ///
   /// This is not invoked and resolves silently when using Flutter web.
   Future<void> startResourceLoading(
     String key, {
@@ -107,7 +98,7 @@ class DatadogRum {
       'key': key,
       'url': url,
       'method': method.toUpperCase(),
-      'attributes': attributes,
+      'attributes': Platform.isIOS ? jsonEncode(attributes) : attributes,
     });
   }
 
@@ -144,11 +135,6 @@ class DatadogRum {
   ///
   /// [attributes] will not be reported if [errorMessage] is present
   /// on Android.
-  /// If supplying [attributes], all attribute values will be converted to `Double`
-  /// in iOS. Stringified `"true"` and `"false"` are also recommended for
-  /// `bool` values as Flutter platform channels converts `bool`s to
-  /// NSNumber on iOS, making the attribute value inaccurate. `Iterable`s are not
-  /// supported and nested `Map` support is limited.
   ///
   /// This is not invoked and resolves silently when using Flutter web.
   Future<void> stopResourceLoading(
@@ -163,7 +149,7 @@ class DatadogRum {
       'errorMessage': errorMessage,
       'kind': kind,
       'statusCode': statusCode,
-      'attributes': attributes,
+      'attributes': Platform.isIOS ? jsonEncode(attributes) : attributes,
     });
   }
 

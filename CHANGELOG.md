@@ -1,9 +1,14 @@
 ## Unreleased
 
+## 1.5.2
+
+* Nested arrays and nested maps in attributes are supported on iOS (#62)
+* **BREAKING CHANGE** all attribute maps have been updated from `Map<String, dynamic>` to `Map<String, Object>`. These `Map`s no longer support nullable values.
+
 ## 1.5.1
 
-* Rollback minimum Datadog Flutter Android to 1.8.1
-* Rollback minimum Datadog Flutter iOS to 1.5.0
+* Rollback minimum Datadog Flutter Android to 1.8.1 (#72)
+* Rollback minimum Datadog Flutter iOS to 1.5.0 (#72)
 
 ## 1.5.0
 

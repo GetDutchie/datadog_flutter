@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:logging/logging.dart';
 import 'package:datadog_flutter/src/channel.dart';
 export 'package:datadog_flutter/src/tracking_consent.dart';
@@ -45,12 +48,6 @@ class DatadogLogger {
   }
 
   /// Log message directly.
-  ///
-  /// If supplying [attributes], all attribute values will be converted to `Double`
-  /// in iOS. Stringified `"true"` and `"false"` are also recommended for
-  /// `bool` values as Flutter platform channels converts `bool`s to
-  /// NSNumber on iOS, making the attribute value inaccurate. `Iterable`s are not
-  /// supported and nested `Map` support is limited.
   Future<void> log(
     String logMessage,
     Level logLevel, {
@@ -60,7 +57,8 @@ class DatadogLogger {
       'identifier': hashCode.toString(),
       'level': _levelAsStatus(logLevel),
       'message': logMessage,
-      if (attributes != null) 'attributes': attributes,
+      if (attributes != null)
+        'attributes': Platform.isIOS ? jsonEncode(attributes) : attributes,
     });
   }
 

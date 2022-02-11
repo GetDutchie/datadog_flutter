@@ -20,4 +20,5 @@ Log to Datadog from Flutter.
 
   # https://github.com/flutter/flutter/issues/17978
   s.dependency 'DatadogSDK', '>= 1.5.0'
+  s.dependency 'AnyCodable-FlightSchool', '~> 0.6.0'
 end
