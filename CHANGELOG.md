@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Acknowledge `extraInfo` arguments for Flutter Web users (#76)
+
 ## 1.5.2
 
 * Nested arrays and nested maps in attributes are supported on iOS (#62)
