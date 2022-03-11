@@ -23,7 +23,7 @@ external void onReady(VoidCallback callback);
 external void setRumGlobalContext(dynamic values);
 
 @JS()
-external void setUser(Map options);
+external void setUser(dynamic options);
 
 @JS()
 external void startView(String name);
