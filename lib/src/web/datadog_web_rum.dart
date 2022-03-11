@@ -43,12 +43,11 @@ class DatadogWebRum {
       case 'rumStopView':
         return false;
       case 'setUserInfo':
-        dd_rum.setUser({
-          'email': call.arguments['email'],
-          'id': call.arguments['id'],
-          'name': call.arguments['name'],
-          ...?call.arguments['extraInfo']
-        });
+        dd_rum.setUser(dd_rum.UserOptions(
+          email: call.arguments['email'],
+          id: call.arguments['id'],
+          name: call.arguments['name'],
+        ));
         return true;
       default:
         return null;
