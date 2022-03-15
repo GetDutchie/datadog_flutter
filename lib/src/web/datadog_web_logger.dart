@@ -31,7 +31,8 @@ class DatadogWebLogger {
         logAttributes[call.arguments['identifier']]?[call.arguments['key']] =
             call.arguments['value'];
         dd_logs.setLoggerGlobalContext(
-            logAttributes[call.arguments['identifier']] ?? {});
+          logAttributes[call.arguments['identifier']] ?? {},
+        );
         return true;
       case 'loggerAddTag':
         return false;
@@ -39,7 +40,8 @@ class DatadogWebLogger {
         logAttributes[call.arguments['identifier']]
             ?.remove(call.arguments['key']);
         dd_logs.setLoggerGlobalContext(
-            jsify(logAttributes[call.arguments['identifier']] ?? {}));
+          jsify(logAttributes[call.arguments['identifier']] ?? {}),
+        );
         return true;
       case 'loggerRemoveTag':
         return false;

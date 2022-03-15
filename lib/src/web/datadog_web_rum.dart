@@ -27,7 +27,9 @@ class DatadogWebRum {
         return false;
       case 'rumAddUserAction':
         dd_rum.addAction(
-            call.arguments['name'], jsify(call.arguments['attributes']));
+          call.arguments['name'],
+          jsify(call.arguments['attributes']),
+        );
         return true;
       case 'rumRemoveAttribute':
         rumAttributes.remove(call.arguments['key']);
@@ -41,11 +43,12 @@ class DatadogWebRum {
       case 'rumStopView':
         return false;
       case 'setUserInfo':
-        dd_rum.setUser(dd_rum.UserOptions(
-          email: call.arguments['email'],
-          id: call.arguments['id'],
-          name: call.arguments['name'],
-        ));
+        dd_rum.setUser(jsify({
+          'email': call.arguments['email'],
+          'id': call.arguments['id'],
+          'name': call.arguments['name'],
+          ...?call.arguments['extraInfo']
+        }));
         return true;
       default:
         return null;

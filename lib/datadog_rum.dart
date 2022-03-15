@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
-
+import 'package:datadog_flutter/src/platform/active_platform.dart';
 import 'package:flutter/material.dart';
 import 'package:datadog_flutter/src/channel.dart';
 
@@ -69,7 +68,7 @@ class DatadogRum {
     return await channel.invokeMethod('rumAddUserAction', {
       'name': name,
       'type': action.index,
-      'attributes': Platform.isIOS ? jsonEncode(attributes) : attributes,
+      'attributes': platform.isIOS ? jsonEncode(attributes) : attributes,
     });
   }
 
@@ -98,7 +97,7 @@ class DatadogRum {
       'key': key,
       'url': url,
       'method': method.toUpperCase(),
-      'attributes': Platform.isIOS ? jsonEncode(attributes) : attributes,
+      'attributes': platform.isIOS ? jsonEncode(attributes) : attributes,
     });
   }
 
@@ -149,7 +148,7 @@ class DatadogRum {
       'errorMessage': errorMessage,
       'kind': kind,
       'statusCode': statusCode,
-      'attributes': Platform.isIOS ? jsonEncode(attributes) : attributes,
+      'attributes': platform.isIOS ? jsonEncode(attributes) : attributes,
     });
   }
 

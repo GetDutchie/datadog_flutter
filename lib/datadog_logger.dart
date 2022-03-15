@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
-
+import 'package:datadog_flutter/src/platform/active_platform.dart';
 import 'package:logging/logging.dart';
 import 'package:datadog_flutter/src/channel.dart';
 export 'package:datadog_flutter/src/tracking_consent.dart';
@@ -58,7 +57,7 @@ class DatadogLogger {
       'level': _levelAsStatus(logLevel),
       'message': logMessage,
       if (attributes != null)
-        'attributes': Platform.isIOS ? jsonEncode(attributes) : attributes,
+        'attributes': platform.isIOS ? jsonEncode(attributes) : attributes,
     });
   }
 
