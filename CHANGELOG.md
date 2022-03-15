@@ -1,6 +1,9 @@
 ## Unreleased
 
+## 1.6.0
+
 * Acknowledge `extraInfo` arguments for Flutter Web users (#76)
+* Resolve `Platform` determination for web (#77)
 
 ## 1.5.2
 
