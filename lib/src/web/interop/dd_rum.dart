@@ -23,7 +23,7 @@ external void onReady(VoidCallback callback);
 external void setRumGlobalContext(dynamic values);
 
 @JS()
-external void setUser(UserOptions options);
+external void setUser(dynamic options);
 
 @JS()
 external void startView(String name);
@@ -45,19 +45,5 @@ class DatadogOptions {
     String service,
     String site,
     bool trackInteractions,
-  });
-}
-
-@JS()
-@anonymous
-class UserOptions {
-  external String? get email;
-  external String? get id;
-  external String? get name;
-
-  external factory UserOptions({
-    String? email,
-    String? id,
-    String? name,
   });
 }
