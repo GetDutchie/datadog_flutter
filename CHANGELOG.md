@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.7.0
+
+* Fix incorrectly named key for `extraInfo` on `DatadogFlutter#setUserInfo` in iOS (#84)
+* Bump minimum Datadog SDK to 1.11.1. Related to [DataDog/dd-sdk-android#709](https://github.com/DataDog/dd-sdk-android/issues/709) (#85)
+
 ## 1.6.0
 
 * Acknowledge `extraInfo` arguments for Flutter Web users (#76)
