@@ -240,12 +240,12 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         result(true)
 
       case "setUserInfo":
-        let attributes = encodeAttributes(args?["attributes"] as? String)
+        let extraInfo = encodeAttributes(args?["extraInfo"] as? String)
         Datadog.setUserInfo(
           id: args?["id"] as? String,
           name: args?["name"] as? String,
           email: args?["email"] as? String,
-          extraInfo: attributes ?? [AttributeKey : AttributeValue]()
+          extraInfo: extraInfo ?? [AttributeKey : AttributeValue]()
         )
         result(true)
 
