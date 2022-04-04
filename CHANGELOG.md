@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.7.1
+
+* Fix empty `extraInfo` exception on iOS (#89)
+
 ## 1.7.0
 
 * Fix incorrectly named key for `extraInfo` on `DatadogFlutter#setUserInfo` in iOS (#84)
