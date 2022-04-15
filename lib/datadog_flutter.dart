@@ -45,7 +45,7 @@ class DatadogFlutter {
   static Future<void> setUserInfo({
     String? id,
     String? email,
-    Map<String, dynamic>? extraInfo,
+    Map<String, dynamic> extraInfo = const <String, dynamic>{},
     String? name,
   }) async {
     return await channel.invokeMethod('setUserInfo', {
