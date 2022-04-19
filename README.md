@@ -77,7 +77,7 @@ RUM adds support for error, event, and screen tracking. The integration requires
       ],
     );
     ```
-1. Automatically report errors:
+1. Automatically report errors (on iOS deployments be sure to [upload your dSYMs](https://github.com/DataDog/datadog-ci/tree/master/src/commands/dsyms)):
     ```dart
     void main() async {
       // Capture Flutter errors automatically:

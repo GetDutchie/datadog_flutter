@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Adds native crash reporting support on iOS (#92)
+
 ## 1.7.1
 
 * Fix empty `extraInfo` exception on iOS (#89)
