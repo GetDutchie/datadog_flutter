@@ -52,12 +52,15 @@ class DatadogLogger {
     Level logLevel, {
     Map<String, dynamic>? attributes,
   }) async {
+    if (logLevel == Level.OFF) {
+      return;
+    }
+
     return await channel.invokeMethod('loggerLog', {
       'identifier': hashCode.toString(),
       'level': _levelAsStatus(logLevel),
       'message': logMessage,
-      if (attributes != null)
-        'attributes': platform.isIOS ? jsonEncode(attributes) : attributes,
+      if (attributes != null) 'attributes': platform.isIOS ? jsonEncode(attributes) : attributes,
     });
   }
 
@@ -88,11 +91,13 @@ class DatadogLogger {
   }
 
   String _levelAsStatus(Level level) {
-    if (level.value <= 500) return 'debug';
+    // Capture 'fine' logs as well as `SHOUT` since SHOUT
+    // is intended for debugging
+    if (level.value <= 500 || level == Level.SHOUT) return 'debug';
 
-    if (level.value <= 700) return 'info';
+    if (level == Level.INFO) return 'info';
 
-    if (level.value <= 800) return 'notice';
+    if (level == Level.CONFIG) return 'notice';
 
     if (level == Level.WARNING) return 'warn';
 

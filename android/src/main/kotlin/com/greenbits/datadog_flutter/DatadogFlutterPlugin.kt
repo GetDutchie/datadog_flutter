@@ -116,16 +116,16 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         when (logLevel) {
           "debug" -> {
             if (attributes != null) {
-              getLogger(call)?.v(logMessage, attributes = attributes)
+              getLogger(call)?.d(logMessage, attributes = attributes)
             } else {
-              getLogger(call)?.v(logMessage)
+              getLogger(call)?.d(logMessage)
             }
           }
           "info" -> {
             if (attributes != null) {
-              getLogger(call)?.d(logMessage, attributes = attributes)
+              getLogger(call)?.i(logMessage, attributes = attributes)
             } else {
-              getLogger(call)?.d(logMessage)
+              getLogger(call)?.i(logMessage)
             }
           }
           "notice" -> {
