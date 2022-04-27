@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.7.2
+
 * Permit non-`http.Request` requests to be sent through `DatadogTracingHttpClient` (#93)
 
 ## 1.7.1
