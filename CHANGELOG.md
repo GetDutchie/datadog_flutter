@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Permit non-`http.Request` requests to be sent through `DatadogTracingHttpClient` (#93)
+
 ## 1.7.1
 
 * Fix empty `extraInfo` exception on iOS (#89)
