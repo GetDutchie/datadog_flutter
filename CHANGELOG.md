@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 2.0.0
+
+* Fix unexpected log severity mappings (#96)
+
 ## 1.7.1
 
 * Fix empty `extraInfo` exception on iOS (#89)
