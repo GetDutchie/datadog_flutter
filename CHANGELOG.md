@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.7.3
+
 * Adds native crash reporting support on iOS (#92)
 
 ## 1.7.2
