@@ -3,6 +3,7 @@ import UIKit
 import Datadog
 import Foundation
 import AnyCodable
+import DatadogCrashReporting
 
 public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
   private var loggers: [String: Logger] = [:]
@@ -302,7 +303,7 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
         rumApplicationID: rumApplicationId!,
         clientToken: clientToken,
         environment: environment
-      )
+      ).enableCrashReporting(using: DDCrashReportingPlugin())
     } else {
       config = Datadog.Configuration.builderUsing(
         clientToken: clientToken,

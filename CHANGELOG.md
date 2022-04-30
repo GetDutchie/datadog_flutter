@@ -1,5 +1,6 @@
 ## Unreleased
 
+* Adds native crash reporting support on iOS (#92)
 * Permit non-`http.Request` requests to be sent through `DatadogTracingHttpClient` (#93)
 
 ## 1.7.1
