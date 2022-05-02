@@ -1,9 +1,6 @@
 ## Unreleased
 
 * Permit non-`http.Request` requests to be sent through `DatadogTracingHttpClient` (#93)
-
-## 2.0.0
-
 * Fix unexpected log severity mappings (#96)
 
 ## 1.7.1
