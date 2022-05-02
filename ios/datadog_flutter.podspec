@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'datadog_flutter'
-  s.version          = '0.0.2'
+  s.version          = '0.0.3'
   s.summary          = 'Log to Datadog from Flutter.'
   s.description      = <<-DESC
 Log to Datadog from Flutter.
@@ -20,5 +20,7 @@ Log to Datadog from Flutter.
 
   # https://github.com/flutter/flutter/issues/17978
   s.dependency 'DatadogSDK', '>= 1.8.0'
+  # https://github.com/GetDutchie/datadog_flutter/issues/99
+  s.dependency 'DatadogSDKCrashReporting', '>= 1.11.0'
   s.dependency 'AnyCodable-FlightSchool', '~> 0.6.0'
 end
