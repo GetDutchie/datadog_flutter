@@ -1,6 +1,6 @@
 import 'package:datadog_flutter/datadog_logger.dart';
 import 'package:datadog_flutter/src/channel.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 
@@ -9,14 +9,12 @@ import 'method_channel_helpers.dart';
 void main() {
   group('DatadogLogger', () {
     late DatadogLogger subject;
-    late List<MethodCall> calls;
 
     setUp(() {
-      calls = [];
       overrideMethodChannel(
         channelName: channel.name,
         onCall: (call) async {
-          calls.add(call);
+          // Ignore calls. This prevents `MissingPluginException`s.
         },
       );
       subject = DatadogLogger(
@@ -24,81 +22,85 @@ void main() {
         bindOnRecord: false,
       );
     });
-    group('log', () {
-      String logCallLevel() {
-        final logCalls = calls.logCalls();
-
-        return logCalls.single.arguments['level'] as String;
-      }
-
+    group('levelAsStatus', () {
       test('it maps Level.ALL to debug', () async {
-        await subject.log('test', Level.ALL);
+        final status = subject.levelAsStatus(Level.ALL);
 
-        expect(logCallLevel(), 'debug');
+        expect(status, 'debug');
       });
 
       test('it maps Level.FINEST to debug', () async {
-        await subject.log('test', Level.FINEST);
+        final status = subject.levelAsStatus(Level.FINEST);
 
-        expect(logCallLevel(), 'debug');
+        expect(status, 'debug');
       });
       test('it maps Level.FINER to debug', () async {
-        await subject.log('test', Level.FINER);
+        final status = subject.levelAsStatus(Level.FINER);
 
-        expect(logCallLevel(), 'debug');
+        expect(status, 'debug');
       });
 
       test('it maps Level.FINE to debug', () async {
-        await subject.log('test', Level.FINE);
+        final status = subject.levelAsStatus(Level.FINE);
 
-        expect(logCallLevel(), 'debug');
+        expect(status, 'debug');
       });
 
       test('it maps Level.SHOUT to debug', () async {
-        await subject.log('test', Level.SHOUT);
+        final status = subject.levelAsStatus(Level.SHOUT);
 
-        expect(logCallLevel(), 'debug');
+        expect(status, 'debug');
       });
 
       test('it maps Level.CONFIG to notice', () async {
-        await subject.log('test', Level.CONFIG);
+        final status = subject.levelAsStatus(Level.CONFIG);
 
-        expect(logCallLevel(), 'notice');
+        expect(status, 'notice');
       });
 
       test('it maps Level.INFO to info', () async {
-        await subject.log('test', Level.INFO);
+        final status = subject.levelAsStatus(Level.INFO);
 
-        expect(logCallLevel(), 'info');
+        expect(status, 'info');
       });
 
       test('it maps Level.WARNING to warn', () async {
-        await subject.log('test', Level.WARNING);
+        final status = subject.levelAsStatus(Level.WARNING);
 
-        expect(logCallLevel(), 'warn');
+        expect(status, 'warn');
       });
 
       test('it maps Level.SEVERE to error', () async {
-        await subject.log('test', Level.SEVERE);
+        final status = subject.levelAsStatus(Level.SEVERE);
 
-        expect(logCallLevel(), 'error');
+        expect(status, 'error');
       });
 
       test('it does not log Level.OFF logs', () async {
-        await subject.log('test', Level.OFF);
+        bool levelAsStatusCalled = false;
+        _FakeDatadogLogger(
+          // Since this is invoked as a parameter to the `loggerLog`
+          // MethodCall, use it as a hook to detect whether logging
+          // was performed
+          onLevelAsStatusCalled: () => levelAsStatusCalled = true,
+        ).log('test', Level.OFF);
 
-        expect(calls.nothingLogged(), isTrue);
+        expect(levelAsStatusCalled, isFalse);
       });
     });
   });
 }
 
-extension on List<MethodCall> {
-  List<MethodCall> logCalls() {
-    return where((element) => element.method == 'loggerLog').toList();
-  }
+class _FakeDatadogLogger extends DatadogLogger {
+  final VoidCallback onLevelAsStatusCalled;
 
-  bool nothingLogged() {
-    return logCalls().isEmpty;
+  _FakeDatadogLogger({
+    required this.onLevelAsStatusCalled,
+  });
+
+  @override
+  String levelAsStatus(Level level) {
+    onLevelAsStatusCalled();
+    return '';
   }
 }
