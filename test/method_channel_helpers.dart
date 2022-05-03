@@ -25,7 +25,8 @@ void overrideMethodChannel({
   // without fear of any issues
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger.setMockMethodCallHandler(
+  TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
+      .setMockMethodCallHandler(
     MethodChannel(channelName),
     onCall,
   );

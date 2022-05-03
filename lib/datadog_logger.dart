@@ -61,7 +61,8 @@ class DatadogLogger {
       'identifier': hashCode.toString(),
       'level': levelAsStatus(logLevel),
       'message': logMessage,
-      if (attributes != null) 'attributes': platform.isIOS ? jsonEncode(attributes) : attributes,
+      if (attributes != null)
+        'attributes': platform.isIOS ? jsonEncode(attributes) : attributes,
     });
   }
 
