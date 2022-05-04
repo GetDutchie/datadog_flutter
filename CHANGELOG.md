@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.7.3+2
+
+* Revert native crash reporting support for iOS (restores 1.7.2) (#99)
+
 ## 1.7.3+1
 
 * Fixes crash for missing pod `DatadogSDKCrashReporting` (#99)
