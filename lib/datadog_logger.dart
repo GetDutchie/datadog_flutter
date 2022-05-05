@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:datadog_flutter/src/platform/active_platform.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:datadog_flutter/src/channel.dart';
 export 'package:datadog_flutter/src/tracking_consent.dart';
@@ -52,9 +53,13 @@ class DatadogLogger {
     Level logLevel, {
     Map<String, dynamic>? attributes,
   }) async {
+    if (logLevel == Level.OFF) {
+      return;
+    }
+
     return await channel.invokeMethod('loggerLog', {
       'identifier': hashCode.toString(),
-      'level': _levelAsStatus(logLevel),
+      'level': levelAsStatus(logLevel),
       'message': logMessage,
       if (attributes != null)
         'attributes': platform.isIOS ? jsonEncode(attributes) : attributes,
@@ -87,12 +92,16 @@ class DatadogLogger {
     });
   }
 
-  String _levelAsStatus(Level level) {
-    if (level.value <= 500) return 'debug';
+  @protected
+  @visibleForTesting
+  String levelAsStatus(Level level) {
+    // Capture 'fine' logs as well as `SHOUT` since SHOUT
+    // is intended for debugging
+    if (level.value <= 500 || level == Level.SHOUT) return 'debug';
 
-    if (level.value <= 700) return 'info';
+    if (level == Level.INFO) return 'info';
 
-    if (level.value <= 800) return 'notice';
+    if (level == Level.CONFIG) return 'notice';
 
     if (level == Level.WARNING) return 'warn';
 
