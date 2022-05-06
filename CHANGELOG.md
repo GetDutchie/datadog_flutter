@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 2.0.0
+
+* **BREAKING CHANGE** Android logs that were mapped under `Level.fine` and below are now mapped as "debug" instead of "verbose." Similarly, `Level.INFO` is now mapped to "info" instead of "debug." Log levels for Android and iOS that were `Level.SHOUT` are now mapped to "debug." While this change does not affect Flutter implementations it will affect how your logs are ingested by Datadog. (#96)
+
 ## 1.7.3+2
 
 * Revert native crash reporting support for iOS (restores 1.7.2) (#99)
@@ -15,7 +19,6 @@
 ## 1.7.2
 
 * Permit non-`http.Request` requests to be sent through `DatadogTracingHttpClient` (#93)
-* Fix unexpected log severity mappings (#96)
 
 ## 1.7.1
 
