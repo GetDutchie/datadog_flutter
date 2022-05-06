@@ -239,7 +239,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         GlobalRum.get().startUserAction(
           type,
           call.argument<String>("name")!!,
-          call.argument<Map<String, Any?>>("attributes")!!
+          call.argument<Map<String, Any?>>("attributes") ?: emptyMap<String, Any?>()
         )
         result.success(true)
       }
@@ -255,7 +255,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
         GlobalRum.get().startUserAction(
           type,
           call.argument<String>("name")!!,
-          call.argument<Map<String, Any?>>("attributes")!!
+          call.argument<Map<String, Any?>>("attributes") ?: emptyMap<String, Any?>()
         )
         result.success(true)
       }
