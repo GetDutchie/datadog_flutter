@@ -312,7 +312,7 @@ public class SwiftDatadogFlutterPlugin: NSObject, FlutterPlugin {
 
     config = config.set(serviceName: serviceName)
     if useEUEndpoints {
-      config = config.set(endpoint: .eu)
+      config = config.set(endpoint: .us3)
     }
 
     return config

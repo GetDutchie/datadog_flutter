@@ -10,6 +10,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 import android.util.Log
 import com.datadog.android.log.Logger
 import com.datadog.android.Datadog
+import com.datadog.android.DatadogSite
 import com.datadog.android.core.configuration.Configuration
 import com.datadog.android.core.configuration.Credentials
 import com.datadog.android.privacy.TrackingConsent
@@ -68,7 +69,7 @@ public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
           rumApplicationId != null
         )
         if (call.argument<Boolean>("useEUEndpoints")!!) {
-          configBuilder = configBuilder.useEUEndpoints()
+          configBuilder = configBuilder.useSite(DatadogSite.US3)
         }
         val config = configBuilder.build()
 
