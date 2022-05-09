@@ -1,28 +1,25 @@
 import 'package:datadog_flutter/datadog_logger.dart';
 import 'package:datadog_flutter/src/channel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:logging/logging.dart';
-import 'package:test/test.dart';
-
-import 'method_channel_helpers.dart';
 
 void main() {
   group('DatadogLogger', () {
     late DatadogLogger subject;
 
     setUp(() {
-      overrideMethodChannel(
-        channelName: channel.name,
-        onCall: (call) async {
-          // Ignore calls. This prevents `MissingPluginException`s.
-        },
-      );
+      TestWidgetsFlutterBinding.ensureInitialized();
+
+      TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (_) async => null);
+
       subject = DatadogLogger(
         loggerName: 'test_logger',
         bindOnRecord: false,
       );
     });
-    group('levelAsStatus', () {
+    group('#levelAsStatus', () {
       test('it maps Level.ALL to debug', () async {
         final status = subject.levelAsStatus(Level.ALL);
 
