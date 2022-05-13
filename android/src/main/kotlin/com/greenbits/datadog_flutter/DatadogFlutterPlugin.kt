@@ -30,11 +30,13 @@ import com.datadog.android.rum.RumResourceKind
 public class DatadogFlutterPlugin: FlutterPlugin, MethodCallHandler {
   private var loggers = mutableMapOf<String, Logger>()
   private var traces = mutableMapOf<String, Span>()
+  private lateinit var context : Context
+  private lateinit var channel : MethodChannel
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    context = flutterPluginBinding.getApplicationContext()
-    val channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.greenbits.com/datadog_flutter")
-    channel.setMethodCallHandler(DatadogFlutterPlugin());
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "plugins.greenbits.com/datadog_flutter")
+    channel.setMethodCallHandler(this);
+    context = flutterPluginBinding.applicationContext
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
