@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 2.0.0-beta.4
+
+* Make `context` available in Android
+
 ## 2.0.0-beta.2
 
 * **BREAKING CHANGE** Remove support for Flutter 1.12 to add support Flutter 3 on Android. This only affects apps using Flutter <1.12.
