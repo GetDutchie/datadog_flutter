@@ -1,5 +1,9 @@
 [![Pub](https://img.shields.io/pub/v/datadog_flutter.svg)](https://pub.dev/packages/datadog_flutter)
 
+# Use the Official Datadog Flutter SDK Instead of This Package
+
+This package has been deprecated in favor of [the official Datadog Flutter SDK](https://pub.dev/packages/datadog_flutter_plugin). Please see [the announcement](https://github.com/GetDutchie/datadog_flutter/issues/108) or skip ahead to [the new, official repo](https://github.com/DataDog/dd-sdk-flutter).
+
 # Datadog Flutter
 
 Community implementation of native bindings for Datadog's SDK. **This is not an official package**.
